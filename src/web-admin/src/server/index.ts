@@ -3,6 +3,13 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
 
+// import { db } from '../database/drizzle.config';
+// import { db } from '../../../database/drizzle.client'; // updated path
+// import { events, attendees, users } from '../../../database/src/schemas/alltables';
+// import { eq,gte } from 'drizzle-orm';
+
+
+
 const fastify = Fastify({ logger: true });
 const PORT = 3124;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -43,6 +50,7 @@ fastify.post('/api/auth/local-login', async (request, reply) => {
     reply.code(500).send({ error: 'Internal server error' });
   }
 });
+
 
 // Start server
 try {
