@@ -1,284 +1,126 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../contexts/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useState, useEffect } from 'react';
+import { User, Calendar, Bell, LogOut } from 'lucide-react';
 
-function HomePage() {
+interface ServiceCard {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  route: string;
+}
+
+const serviceCards: ServiceCard[] = [
+  {
+    title: 'User Profile',
+    description: 'View and manage your personal profile, credentials, and preferences.',
+    icon: User,
+    route: '/profile',
+  },
+  {
+    title: 'Your Events',
+    description: 'Access and manage your assigned or registered events.',
+    icon: Calendar,
+    route: '/events',
+  },
+  {
+    title: 'Notifications',
+    description: 'View your alerts, reminders, and important team updates.',
+    icon: Bell,
+    route: '/inbox',
+  },
+];
+
+const ServiceCardItem = ({ card, onClick }: { card: ServiceCard; onClick: () => void }) => (
+  <div
+    onClick={onClick}
+    className="cursor-pointer bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 border border-gray-200"
+  >
+    <card.icon className="w-10 h-10 text-[#7A003C] mb-4" />
+    <h3 className="text-xl font-semibold mb-2 text-gray-800">{card.title}</h3>
+    <p className="text-gray-500 text-sm">{card.description}</p>
+  </div>
+);
+
+function UserDashboard() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [isLocalAuth, setIsLocalAuth] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated via local auth (not main portal)
     const authSource = sessionStorage.getItem('teamd-auth-source');
     setIsLocalAuth(authSource === 'local');
   }, [user]);
 
-  const services = [
-    {
-      title: 'Service Area 1',
-      description: 'Team D service offerings and capabilities for large event support.',
-      icon: '⚙️',
-      features: ['Feature A', 'Feature B', 'Feature C', 'Feature D']
-    },
-    {
-      title: 'Service Area 2',
-      description: 'Additional team capabilities and service offerings.',
-      icon: '🛠️',
-      features: ['Feature E', 'Feature F', 'Feature G', 'Feature H']
-    },
-    {
-      title: 'Support Services',
-      description: 'Team D support and assistance for event operations.',
-      icon: '🔧',
-      features: ['Support Type 1', 'Support Type 2', 'Support Type 3', 'Support Type 4']
-    },
-    {
-      title: 'Additional Services',
-      description: 'Extended team capabilities and specialized services.',
-      icon: '📋',
-      features: ['Service 1', 'Service 2', 'Service 3', 'Service 4']
-    }
-  ];
+  return (
+    <main className="min-h-screen flex flex-col bg-gray-50">
+      {/* ✅ Top Bar */}
+      <header className="bg-[#7C3AED] text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          {/* Left: Logo + Title */}
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#7C3AED] font-bold text-lg shadow-sm">
+              D
+            </div>
+            <div>
+              <h1 className="font-bold text-lg leading-none">Team D Events</h1>
+              <p className="text-sm opacity-80">User Dashboard</p>
+            </div>
+          </div>
 
+          {/* Right: User Info */}
+          <div className="flex items-center space-x-4">
+            <span className="text-sm hidden sm:inline">Hi, {user?.email}</span>
+            {isLocalAuth && (
+              <button
+                onClick={logout}
+                className="flex items-center space-x-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* ✅ Main Content */}
+      <section className="flex-1 max-w-7xl mx-auto px-6 py-12">
+        {/* Welcome Section */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+            Welcome, {user?.email}
+          </h2>
+          <p className="text-gray-600">
+            Access your personal dashboard and manage your Team D event experience.
+          </p>
+        </div>
+
+        {/* ✅ Service Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {serviceCards.map((card) => (
+            <ServiceCardItem
+              key={card.title}
+              card={card}
+              onClick={() => navigate({ to: card.route })}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ✅ Footer */}
+      <footer className="bg-gray-100 border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
+        © 2025 Team D Event Services. Large event support and coordination.
+      </footer>
+    </main>
+  );
+}
+
+function HomePage() {
   return (
     <ProtectedRoute>
-      <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-        {/* Header */}
-        <header style={{
-          backgroundColor: '#8b5cf6',
-          color: 'white',
-          padding: '20px 0',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <div style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '0 20px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <div>
-              <h1 style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                margin: 0
-              }}>
-                Team D - Event Services
-              </h1>
-              <p style={{
-                fontSize: '0.9rem',
-                margin: '4px 0 0 0',
-                opacity: 0.9
-              }}>
-                Team D Large Event Support
-              </p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <span style={{ fontSize: '0.9rem' }}>Welcome, {user?.email}</span>
-              {isLocalAuth && (
-                <button
-                  onClick={logout}
-                  style={{
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  Logout
-                </button>
-              )}
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '40px 20px'
-        }}>
-          {/* Welcome Section */}
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '60px'
-          }}>
-            <h2 style={{
-              fontSize: '2.5rem',
-              fontWeight: 'bold',
-              color: '#1f2937',
-              marginBottom: '16px'
-            }}>
-              Welcome, {user?.email}
-            </h2>
-            <p style={{
-              fontSize: '1.2rem',
-              color: '#6b7280',
-              maxWidth: '600px',
-              margin: '0 auto'
-            }}>
-              Team D services and capabilities for large event support.
-              Access your team resources and manage event-related activities.
-            </p>
-          </div>
-
-          {/* Services Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '30px',
-            marginBottom: '60px'
-          }}>
-            {services.map((service, index) => (
-              <div
-                key={index}
-                style={{
-                  backgroundColor: 'white',
-                  padding: '30px',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid #e5e7eb',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-                }}
-              >
-                <div style={{
-                  fontSize: '3rem',
-                  marginBottom: '20px',
-                  textAlign: 'center'
-                }}>
-                  {service.icon}
-                </div>
-                <h3 style={{
-                  fontSize: '1.3rem',
-                  fontWeight: 'bold',
-                  color: '#1f2937',
-                  marginBottom: '12px',
-                  textAlign: 'center'
-                }}>
-                  {service.title}
-                </h3>
-                <p style={{
-                  color: '#6b7280',
-                  marginBottom: '20px',
-                  lineHeight: '1.6',
-                  textAlign: 'center'
-                }}>
-                  {service.description}
-                </p>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '8px'
-                }}>
-                  {service.features.map((feature, featureIndex) => (
-                    <div
-                      key={featureIndex}
-                      style={{
-                        backgroundColor: '#f3f4f6',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        fontSize: '0.85rem',
-                        color: '#374151',
-                        textAlign: 'center'
-                      }}
-                    >
-                      {feature}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Contact Section */}
-          <div style={{
-            backgroundColor: 'white',
-            padding: '40px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            textAlign: 'center'
-          }}>
-            <h3 style={{
-              fontSize: '1.8rem',
-              fontWeight: 'bold',
-              color: '#1f2937',
-              marginBottom: '16px'
-            }}>
-              Need Team D Services?
-            </h3>
-            <p style={{
-              color: '#6b7280',
-              marginBottom: '30px',
-              fontSize: '1.1rem'
-            }}>
-              Contact the team to discuss your event requirements and service needs.
-            </p>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: '20px',
-              flexWrap: 'wrap'
-            }}>
-              <button style={{
-                backgroundColor: '#8b5cf6',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}>
-                Contact Team
-              </button>
-              <button style={{
-                backgroundColor: '#f3f4f6',
-                color: '#374151',
-                border: '1px solid #d1d5db',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}>
-                View Services
-              </button>
-            </div>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer style={{
-          backgroundColor: '#1f2937',
-          color: '#9ca3af',
-          padding: '30px 0',
-          marginTop: '60px'
-        }}>
-          <div style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '0 20px',
-            textAlign: 'center'
-          }}>
-            <p style={{ margin: 0, fontSize: '0.9rem' }}>
-              © 2025 Team D Event Services. Large event support and coordination.
-            </p>
-          </div>
-        </footer>
-      </div>
+      <UserDashboard />
     </ProtectedRoute>
   );
 }
