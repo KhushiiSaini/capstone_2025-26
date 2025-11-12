@@ -1,6 +1,6 @@
 import { pgTable, serial, varchar, timestamp, text, boolean, integer, json } from 'drizzle-orm/pg-core';
-import { users } from '@large-event/database/schemas';
-
+// import { users } from '@large-event/database/schemas';
+import { users } from '../schemas/alltables';
 export const teamDProjects = pgTable('teamd_projects', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),

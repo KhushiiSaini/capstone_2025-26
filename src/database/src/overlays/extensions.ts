@@ -1,5 +1,6 @@
 import { pgTable, serial, varchar, timestamp, text, integer } from 'drizzle-orm/pg-core';
-import { users } from '@large-event/database/schemas';
+// import { users } from '@large-event/database/schemas';
+import { users } from '../schemas/alltables';
 
 export const teamDNotifications = pgTable('teamd_notifications', {
   id: serial('id').primaryKey(),
