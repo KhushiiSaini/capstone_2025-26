@@ -1,7 +1,7 @@
 
 # Project Name
 
-Developer Names:
+Developer Names: Hebah Shamnad, Khushii Saini, Rachel Dennis, Himisha Karunathilake, Akshita Bakshi
 
 Date of project start:
 

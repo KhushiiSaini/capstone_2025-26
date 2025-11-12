@@ -231,12 +231,18 @@ export default function ProtectedTeamPortal({ children }: ProtectedTeamPortalPro
     <div>
       {/* Auth info header */}
       <div style={{
+        position: 'fixed',      // sticks to the top
+        top: 0,
+        left: 0,
+        width: '100vw',         // full viewport width
         backgroundColor: '#d4edda',
         borderBottom: '1px solid #c3e6cb',
         padding: '10px 20px',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        boxSizing: 'border-box',
+        zIndex: 1000    
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <span style={{ color: '#155724', fontSize: '0.9rem' }}>
