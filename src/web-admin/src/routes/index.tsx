@@ -2,115 +2,91 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { getCurrentUser, AuthUser } from '../lib/auth';
 import ProtectedTeamPortal from '../components/ProtectedTeamPortal';
+import { useNavigate } from '@tanstack/react-router';
+import { User, Calendar, ChartBar } from 'lucide-react';
+
+interface DashboardCard {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  path: string;
+}
+
+const dashboardCards: DashboardCard[] = [
+  { title: 'Event Manager', description: 'View, edit, and manage all your events', icon: Calendar, path: '/events' },
+  { title: 'User Profile', description: 'Manage your account and settings', icon: User, path: '/profile' },
+  { title: 'Analytics', description: 'Get insights on events and attendees', icon: ChartBar, path: '/analytics' },
+];
+
+const DashboardCardItem = ({ card, onClick }: { card: DashboardCard; onClick: () => void }) => (
+  <div
+    onClick={onClick}
+    className="cursor-pointer bg-[#F9E9F0] rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 border border-[#CA99B1]"
+  >
+    <card.icon className="w-10 h-10 text-[#953363] mb-4" />
+    <h3 className="text-xl font-semibold mb-2 text-[#7A003C]">{card.title}</h3>
+    <p className="text-[#AF668A] text-sm">{card.description}</p>
+  </div>
+);
 
 function TeamDDashboard() {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const authUser = getCurrentUser();
-    setUser(authUser);
+    setUser(getCurrentUser());
   }, []);
 
   return (
-    <main>
-      <div style={{
-        textAlign: 'center',
-        padding: '40px 20px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px',
-        margin: '20px 0'
-      }}>
-        <h1 style={{
-          fontSize: '2.5rem',
-          color: '#333',
-          marginBottom: '20px'
-        }}>
-          Hi {user?.email}
-        </h1>
-        <h2 style={{
-          fontSize: '2rem',
-          color: '#555',
-          marginBottom: '20px'
-        }}>
-          Team D Web Admin
-        </h2>
-        <p style={{
-          fontSize: '1.2rem',
-          color: '#666',
-          marginBottom: '30px'
-        }}>
-          Welcome to the Team D Administrative Dashboard
-        </p>
-        <div style={{
-          backgroundColor: '#e7f3ff',
-          padding: '20px',
-          borderRadius: '4px',
-          border: '1px solid #b3d9ff'
-        }}>
-          <p style={{ margin: 0, color: '#0066cc' }}>
-            This app is running on port 3024 and ready for development!
-          </p>
-          <p style={{ margin: '10px 0 0 0', color: '#0066cc' }}>
-            Session authenticated for: <strong>{user?.email}</strong>
+    <main className="min-h-screen bg-[#FFFFFF] flex flex-col lg:flex-row transition-colors duration-300">
+      {/* Sidebar */}
+      
+      <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
+        <div className="text-center lg:text-left">
+          {/* Main header */}
+          <h2 className="text-3xl font-extrabold text-[#FFFFFF] flex items-center space-x-2">
+            <span>Admin Dashboard</span>
+            <span className="w-6 h-6 bg-gradient-to-tr from-[#953363] to-[#AF668A] rounded-full flex-shrink-0"></span>
+          </h2>
+          {/* Decorative underline */}
+          <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full"></div>
+        </div>
+
+        <div className="flex flex-col space-y-4">
+          {dashboardCards.map((card) => (
+            <button
+              key={card.title}
+              onClick={() => navigate({ to: card.path })}
+              className="flex items-center p-4 rounded-xl bg-[#953363] text-white hover:bg-[#AF668A] transition-all shadow-md"
+            >
+              <card.icon className="w-6 h-6 mr-3" />
+              <span className="font-medium">{card.title}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <section className="flex-1 p-8 lg:p-12">
+        <div className="text-center lg:text-left mb-12">
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-[#7A003C] mb-2">
+            Hi {user?.email}
+          </h1>
+          <p className="text-[#953363] text-lg">
+            Welcome back to your admin dashboard
           </p>
         </div>
 
-        {/* Team D specific content */}
-        <div style={{
-          marginTop: '30px',
-          padding: '20px',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '8px',
-          border: '1px solid #dee2e6'
-        }}>
-          <h3 style={{ color: '#495057', marginBottom: '15px' }}>
-            Team D Management Tools
-          </h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '15px',
-            marginTop: '20px'
-          }}>
-            <div style={{
-              padding: '15px',
-              backgroundColor: '#ffffff',
-              borderRadius: '6px',
-              border: '1px solid #e9ecef',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', color: '#6f42c1' }}>Events</h4>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#6c757d' }}>
-                Manage Team D events and activities
-              </p>
-            </div>
-            <div style={{
-              padding: '15px',
-              backgroundColor: '#ffffff',
-              borderRadius: '6px',
-              border: '1px solid #e9ecef',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', color: '#6f42c1' }}>Users</h4>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#6c757d' }}>
-                Team member management and permissions
-              </p>
-            </div>
-            <div style={{
-              padding: '15px',
-              backgroundColor: '#ffffff',
-              borderRadius: '6px',
-              border: '1px solid #e9ecef',
-              textAlign: 'left'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', color: '#6f42c1' }}>Reports</h4>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#6c757d' }}>
-                Analytics and performance metrics
-              </p>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {dashboardCards.map((card) => (
+            <DashboardCardItem
+              key={card.title}
+              card={card}
+              onClick={() => navigate({ to: card.path })}
+            />
+          ))}
         </div>
-      </div>
+      </section>
     </main>
   );
 }
