@@ -1,11 +1,11 @@
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as sharedSchema from '@large-event/database/schemas';
+import * as sharedSchema from './schemas/alltables';
 import * as overlaySchema from './overlays';
 
 async function runTeamDMigrations() {
-  const connectionString = process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/large_event_db';
+  const connectionString = process.env.DATABASE_URL || 'postgresql://capstone:capstone@localhost:5432/large_event_db';
 
   console.log('🚀 Running Team D database migrations...');
   console.log(`📍 Database: ${connectionString.replace(/:[^:@]*@/, ':***@')}`);

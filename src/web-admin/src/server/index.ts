@@ -8,8 +8,6 @@ import jwt from 'jsonwebtoken';
 // import { events, attendees, users } from '../../../database/src/schemas/alltables';
 // import { eq,gte } from 'drizzle-orm';
 
-
-
 const fastify = Fastify({ logger: true });
 const PORT = 3124;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
