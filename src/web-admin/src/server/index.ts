@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
-import { createTeamDDatabase } from '@teamd/database';
+import { registerProfileRoutes } from './routes/profile';
 
 // import { db } from '../database/drizzle.config';
 // import { db } from '../../../database/drizzle.client'; // updated path
@@ -13,9 +13,6 @@ import { createTeamDDatabase } from '@teamd/database';
 const fastify = Fastify({ logger: true });
 const PORT = 3124;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const { db, schema } = createTeamDDatabase({
-  connectionString: process.env.DATABASE_URL,
-});
 
 // Register plugins
 await fastify.register(cors, {
@@ -54,15 +51,11 @@ fastify.post('/api/auth/local-login', async (request, reply) => {
   }
 });
 
-fastify.get('/api/auth/users', async () => {
-  try {
-    return await db.select().from(schema.users).orderBy(schema.users.id);
-  } catch (error) {
-    fastify.log.error({ err: error }, 'Failed to fetch users');
-    throw fastify.httpErrors.internalServerError('Failed to load users');
-  }
-});
-
+try {
+  await registerProfileRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register profile routes');
+}
 
 // Start server
 try {
