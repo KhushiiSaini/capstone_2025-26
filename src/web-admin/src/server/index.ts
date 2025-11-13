@@ -2,12 +2,12 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
+import { registerProfileRoutes } from './routes/profile';
 
 // import { db } from '../database/drizzle.config';
 // import { db } from '../../../database/drizzle.client'; // updated path
 // import { events, attendees, users } from '../../../database/src/schemas/alltables';
 // import { eq,gte } from 'drizzle-orm';
-
 
 
 const fastify = Fastify({ logger: true });
@@ -51,6 +51,11 @@ fastify.post('/api/auth/local-login', async (request, reply) => {
   }
 });
 
+try {
+  await registerProfileRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register profile routes');
+}
 
 // Start server
 try {
