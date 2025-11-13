@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as EventsRouteImport } from './routes/events'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,15 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/inbox' | '/login' | '/users'
+  fullPaths: '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/inbox' | '/login' | '/users'
-  id: '__root__' | '/' | '/events' | '/inbox' | '/login' | '/users'
+  to: '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
+  id: '__root__' | '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +85,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   InboxRoute: typeof InboxRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   UsersRoute: typeof UsersRoute
 }
 
@@ -86,6 +96,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -124,6 +141,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   InboxRoute: InboxRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   UsersRoute: UsersRoute,
 }
 export const routeTree = rootRouteImport

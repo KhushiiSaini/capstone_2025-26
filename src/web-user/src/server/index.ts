@@ -12,12 +12,115 @@ interface AuthUser {
   id?: number;
 }
 
+interface UserProfile {
+  firstName: string;
+  lastName: string;
+  preferredName?: string;
+  email: string;
+  phoneNumber?: string;
+  dob?: string | null;
+  dietaryRestrictions?: string;
+  emergencyContact?: string;
+  mediaConsent?: boolean;
+  program?: string;
+  year?: string;
+  studentNumber?: string;
+  pronouns?: string;
+}
+
 // Mock user database for development
 const mockUsers: { [email: string]: AuthUser } = {
   'user@teamd.local': { email: 'user@teamd.local', id: 1 },
   'test@teamd.dev': { email: 'test@teamd.dev', id: 2 },
   'demo@teamd.local': { email: 'demo@teamd.local', id: 3 },
+  'alice.johnson@mcmaster.ca': { email: 'alice.johnson@mcmaster.ca', id: 4 },
+  'bob.smith@mcmaster.ca': { email: 'bob.smith@mcmaster.ca', id: 5 },
 };
+
+const profileStore: Record<string, UserProfile> = {
+  'user@teamd.local': {
+    firstName: 'Taylor',
+    lastName: 'Morgan',
+    preferredName: 'Tay',
+    email: 'user@teamd.local',
+    phoneNumber: '905-555-0101',
+    dob: '1999-03-18',
+    dietaryRestrictions: 'Vegetarian',
+    emergencyContact: 'Jordan Morgan - 905-555-1199',
+    mediaConsent: true,
+    program: 'Software Engineering',
+    year: '4',
+    studentNumber: '400123456',
+    pronouns: 'They/Them',
+  },
+  'test@teamd.dev': {
+    firstName: 'Priya',
+    lastName: 'Singh',
+    email: 'test@teamd.dev',
+    phoneNumber: '289-666-1234',
+    dob: '2000-07-11',
+    dietaryRestrictions: 'None',
+    emergencyContact: 'Arjun Singh - 289-777-0101',
+    mediaConsent: false,
+    program: 'Mechanical Engineering',
+    year: '3',
+    studentNumber: '400654321',
+    pronouns: 'She/Her',
+  },
+  'demo@teamd.local': {
+    firstName: 'Logan',
+    lastName: 'Chen',
+    email: 'demo@teamd.local',
+    phoneNumber: '416-210-8888',
+    dob: '1998-01-05',
+    dietaryRestrictions: 'Peanut allergy',
+    emergencyContact: 'Kai Chen - 416-210-1212',
+    mediaConsent: true,
+    program: 'Civil Engineering',
+    year: 'Masters',
+    studentNumber: '401111222',
+    pronouns: 'He/Him',
+  },
+  'alice.johnson@mcmaster.ca': {
+    firstName: 'Alice',
+    lastName: 'Johnson',
+    email: 'alice.johnson@mcmaster.ca',
+    phoneNumber: '905-777-2121',
+    dob: '2001-05-12',
+    dietaryRestrictions: 'Gluten-free',
+    emergencyContact: 'Sam Johnson - 905-777-1111',
+    mediaConsent: true,
+    program: 'Electrical Engineering',
+    year: '2',
+    studentNumber: '401999888',
+    pronouns: 'She/Her',
+  },
+  'bob.smith@mcmaster.ca': {
+    firstName: 'Bob',
+    lastName: 'Smith',
+    email: 'bob.smith@mcmaster.ca',
+    phoneNumber: '905-444-3434',
+    dob: '1997-11-02',
+    dietaryRestrictions: 'None',
+    emergencyContact: 'Erin Smith - 905-444-9898',
+    mediaConsent: false,
+    program: 'Materials Engineering',
+    year: 'PhD',
+    studentNumber: '402000123',
+    pronouns: 'He/Him',
+  },
+};
+
+function getProfile(email: string): UserProfile {
+  if (!profileStore[email]) {
+    profileStore[email] = {
+      firstName: 'New',
+      lastName: 'User',
+      email,
+    };
+  }
+  return profileStore[email];
+}
 
 function validateUser(email: string): AuthUser | null {
   return mockUsers[email] || null;
@@ -49,8 +152,10 @@ fastify.decorateRequest('user', null);
 
 fastify.addHook('onRequest', async (request, reply) => {
   const protectedRoutes = ['/api/auth/me', '/api/auth/token'];
+  const requiresAuth =
+    protectedRoutes.includes(request.url) || request.url.startsWith('/api/profile');
 
-  if (protectedRoutes.includes(request.url)) {
+  if (requiresAuth) {
     const token = request.cookies['auth-token'];
 
     if (!token) {
@@ -118,6 +223,34 @@ fastify.get('/api/auth/me', async (request, reply) => {
 fastify.get('/api/auth/token', async (request, reply) => {
   const token = request.cookies['auth-token'];
   reply.send({ token });
+});
+
+fastify.get('/api/profile', async (request, reply) => {
+  const user = (request as any).user as AuthUser | undefined;
+  if (!user) {
+    return reply.code(401).send({ error: 'Unauthorized' });
+  }
+
+  const profile = getProfile(user.email);
+  reply.send(profile);
+});
+
+fastify.put('/api/profile', async (request, reply) => {
+  const user = (request as any).user as AuthUser | undefined;
+  if (!user) {
+    return reply.code(401).send({ error: 'Unauthorized' });
+  }
+
+  const updates = request.body as Partial<UserProfile>;
+  const profile = getProfile(user.email);
+
+  profileStore[user.email] = {
+    ...profile,
+    ...updates,
+    email: user.email,
+  };
+
+  reply.send(profileStore[user.email]);
 });
 
 // Start server

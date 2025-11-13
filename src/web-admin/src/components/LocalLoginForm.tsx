@@ -53,31 +53,11 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
   };
 
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      padding: '30px',
-      borderRadius: '8px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      maxWidth: '400px',
-      width: '100%'
-    }}>
-      <h2 style={{
-        color: '#6f42c1',
-        marginBottom: '20px',
-        fontSize: '1.5rem',
-        textAlign: 'center'
-      }}>
-        TeamD Local Development
-      </h2>
-
-      <p style={{
-        color: '#666',
-        fontSize: '0.9rem',
-        textAlign: 'center',
-        marginBottom: '20px'
-      }}>
-        Quick login for local development (no main portal required)
-      </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h2 style={{ color: '#7A003C', marginBottom: '6px', fontSize: '1.6rem' }}>Local Login</h2>
+        <p style={{ color: '#953363', margin: 0 }}>Sign in quickly without portal credentials.</p>
+      </div>
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
@@ -104,16 +84,19 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
           style={{
             width: '100%',
             padding: '12px',
-            backgroundColor: '#6f42c1',
+            backgroundColor: '#7A003C',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '999px',
             fontSize: '14px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
+            boxShadow: '0 10px 20px rgba(122,0,60,0.2)',
+            fontWeight: 600,
+            letterSpacing: '0.02em',
           }}
         >
-          {loading ? 'Logging in...' : 'Login to TeamD'}
+          {loading ? 'Logging in...' : 'Login'}
         </button>
 
         {error && (
@@ -128,18 +111,23 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
         )}
       </form>
 
-      <div style={{
-        marginTop: '20px',
-        padding: '15px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '4px'
-      }}>
-        <p style={{
-          margin: '0 0 10px 0',
-          fontSize: '0.8rem',
-          color: '#6c757d',
-          fontWeight: 'bold'
-        }}>
+      <div
+        style={{
+          marginTop: '12px',
+          padding: '18px',
+          backgroundColor: '#FDF4F8',
+          borderRadius: '12px',
+          border: '1px dashed #F3D3DF',
+        }}
+      >
+        <p
+          style={{
+            margin: '0 0 10px 0',
+            fontSize: '0.85rem',
+            color: '#7A003C',
+            fontWeight: 'bold',
+          }}
+        >
           Quick Login (Development):
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -147,7 +135,8 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
             'teamd@local.dev',
             'dev@teamd.local',
             'test@teamd.dev',
-            'admin@teamd.local'
+            'admin@teamd.local',
+            'alice.johnson@mcmaster.ca'
           ].map(userEmail => (
             <button
               key={userEmail}
