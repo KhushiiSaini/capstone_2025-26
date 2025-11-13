@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { Calendar, Users, Send, QrCode, User, ChartBar } from 'lucide-react';
 import ProtectedTeamPortal from '../components/ProtectedTeamPortal';
@@ -30,6 +30,7 @@ function EventManagerPage() {
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const navigate = useNavigate();
+  const activePath = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => {
     setUser(getCurrentUser());
@@ -129,7 +130,9 @@ function EventManagerPage() {
             <button
               key={link.title}
               onClick={() => navigate({ to: link.path })}
-              className="flex items-center p-4 rounded-xl bg-[#953363] text-white hover:bg-[#AF668A] transition-all shadow-md"
+              className={`flex items-center p-4 rounded-xl transition-all shadow-md ${
+                activePath === link.path ? 'bg-[#AF668A] text-white' : 'bg-[#953363] text-white hover:bg-[#AF668A]'
+              }`}
             >
               <link.icon className="w-6 h-6 mr-3" />
               <span className="font-medium">{link.title}</span>
