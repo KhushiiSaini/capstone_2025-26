@@ -2,6 +2,16 @@ import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
+const heroImageUrl = 'https://www.eng.mcmaster.ca/wp-content/uploads/2021/05/JHE-Exterior-scaled.jpg';
+const quickLoginEmails = [
+  'teamd@local.dev',
+  'dev@teamd.local',
+  'test@teamd.dev',
+  'admin@teamd.local',
+  'alice.johnson@mcmaster.ca',
+  'bob.smith@mcmaster.ca',
+];
+
 function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -11,23 +21,20 @@ function LoginPageContent() {
   const searchParams = useSearch({ from: '/login' });
 
   useEffect(() => {
-    // Handle auth query parameter for cross-portal login
     const authToken = (searchParams as any)?.auth;
     if (authToken && !user) {
-      // Decode and extract email from token
       try {
         const payload = JSON.parse(atob(authToken.split('.')[1]));
         if (payload.user?.email) {
           handleAutoLogin(payload.user.email);
         }
-      } catch (error) {
-        console.error('Failed to decode auth token:', error);
+      } catch (err) {
+        console.error('Failed to decode auth token:', err);
       }
     }
   }, [searchParams, user]);
 
   useEffect(() => {
-    // Redirect if already logged in
     if (user) {
       navigate({ to: '/' });
     }
@@ -44,7 +51,7 @@ function LoginPageContent() {
       } else {
         setError('Auto-login failed. Please try logging in manually.');
       }
-    } catch (error) {
+    } catch {
       setError('Auto-login failed. Please try logging in manually.');
     } finally {
       setIsLoading(false);
@@ -69,7 +76,8 @@ function LoginPageContent() {
       } else {
         setError('Login failed. Please check your email and try again.');
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       setError('An error occurred during login. Please try again.');
     } finally {
       setIsLoading(false);
@@ -77,117 +85,159 @@ function LoginPageContent() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f3f4f6',
-      padding: '20px'
-    }}>
-      <div style={{
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '12px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        width: '100%',
-        maxWidth: '400px'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <h1 style={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: '#1f2937',
-            marginBottom: '8px'
-          }}>
-            Team D User Portal
-          </h1>
-          <p style={{
-            color: '#6b7280',
-            fontSize: '1rem'
-          }}>
-            Sign in to access your dashboard
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label
-              htmlFor="email"
-              style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '8px'
-              }}
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          {error && (
-            <div style={{
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#dc2626',
-              padding: '12px',
-              borderRadius: '6px',
-              marginBottom: '20px',
-              fontSize: '14px'
-            }}>
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f7ecf5 0%, #fdf7fb 40%, #ffffff 70%)',
+        padding: '40px 24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '1100px',
+          borderRadius: '32px',
+          overflow: 'hidden',
+          boxShadow: '0 35px 80px rgba(122,0,60,0.25)',
+          backgroundColor: '#fff',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '32px' }}>
+          <section
             style={{
-              width: '100%',
-              backgroundColor: isLoading ? '#9ca3af' : '#8b5cf6',
-              color: 'white',
-              padding: '12px',
-              borderRadius: '6px',
-              border: 'none',
-              fontSize: '16px',
-              fontWeight: '500',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s'
+              flex: '1 1 50%',
+              padding: '48px',
+              background: 'linear-gradient(135deg, #ffffff 0%, #fff8fb 70%)',
+              minHeight: '400px',
             }}
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <p style={{ textTransform: 'uppercase', letterSpacing: '0.4em', color: '#AF668A' }}>Team D</p>
+              <h1 style={{ fontSize: '2rem', color: '#7A003C', margin: '0 0 8px', fontWeight: 800 }}>Local Login</h1>
+              <p style={{ color: '#953363', margin: 0 }}>Sign in quickly without portal credentials.</p>
+            </div>
 
-        <div style={{
-          marginTop: '24px',
-          padding: '16px',
-          backgroundColor: '#f9fafb',
-          borderRadius: '6px',
-          fontSize: '14px',
-          color: '#6b7280'
-        }}>
-          <p style={{ margin: 0, textAlign: 'center' }}>
-            <strong>Team D User Services</strong><br />
-            Large event user support and coordination
-          </p>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your Team D email"
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  borderRadius: '14px',
+                  border: '1px solid #F3D3DF',
+                  fontSize: '16px',
+                  color: '#7A003C',
+                  outline: 'none',
+                }}
+              />
+
+              {error && (
+                <div
+                  style={{
+                    backgroundColor: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    color: '#dc2626',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  borderRadius: '999px',
+                  border: 'none',
+                  backgroundColor: '#7A003C',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 15px 30px rgba(122,0,60,0.25)',
+                }}
+              >
+                {isLoading ? 'Logging in…' : 'Login'}
+              </button>
+            </form>
+
+          <div
+            style={{
+              marginTop: '18px',
+              padding: '18px',
+              backgroundColor: '#FDF4F8',
+              borderRadius: '16px',
+              border: '1px dashed #F3D3DF',
+            }}
+          >
+            <p
+              style={{
+                margin: '0 0 10px 0',
+                fontSize: '0.9rem',
+                color: '#7A003C',
+                fontWeight: 'bold',
+              }}
+            >
+              Quick Login (Development):
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {quickLoginEmails.map((userEmail) => (
+                <button
+                  key={userEmail}
+                  onClick={() => setEmail(userEmail)}
+                  type="button"
+                  style={{
+                    padding: '6px 10px',
+                    fontSize: '0.8rem',
+                    backgroundColor: '#fff',
+                    border: '1px solid #E6B8D1',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    color: '#7A003C',
+                  }}
+                >
+                  {userEmail}
+                </button>
+              ))}
+            </div>
+          </div>
+          </section>
+
+          <section
+            style={{
+              position: 'relative',
+              flex: '1 1 50%',
+              minHeight: '320px',
+              backgroundImage: `linear-gradient(135deg, rgba(98,0,48,0.8), rgba(149,51,99,0.7)), url(${heroImageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ padding: '48px', color: '#fff' }}>
+              <p style={{ textTransform: 'uppercase', letterSpacing: '0.3em', fontSize: '0.8rem', marginBottom: '12px' }}>
+                MES Event Portal
+              </p>
+              <h2 style={{ fontSize: '2.4rem', lineHeight: 1.2, margin: 0, fontWeight: 800 }}>
+                Welcome to the McMaster Engineering Society
+              </h2>
+              <p style={{ marginTop: '18px', maxWidth: '480px', fontSize: '1rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.9)' }}>
+                Manage your invitations, stay informed about upcoming events, and connect with the MES community.
+              </p>
+            </div>
+          </section>
         </div>
       </div>
     </div>
