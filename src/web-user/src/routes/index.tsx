@@ -35,11 +35,11 @@ const serviceCards: ServiceCard[] = [
 const ServiceCardItem = ({ card, onClick }: { card: ServiceCard; onClick: () => void }) => (
   <div
     onClick={onClick}
-    className="cursor-pointer bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 border border-gray-200"
+    className="cursor-pointer bg-[#F9E9F0] rounded-2xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 border border-[#CA99B1]"
   >
-    <card.icon className="w-10 h-10 text-[#7A003C] mb-4" />
-    <h3 className="text-xl font-semibold mb-2 text-gray-800">{card.title}</h3>
-    <p className="text-gray-500 text-sm">{card.description}</p>
+    <card.icon className="w-10 h-10 text-[#953363] mb-4" />
+    <h3 className="text-xl font-semibold mb-2 text-[#7A003C]">{card.title}</h3>
+    <p className="text-[#AF668A] text-sm">{card.description}</p>
   </div>
 );
 
@@ -54,50 +54,42 @@ function UserDashboard() {
   }, [user]);
 
   return (
-    <main className="min-h-screen flex flex-col bg-gray-50">
-      {/* ✅ Top Bar */}
-      <header className="bg-[#7C3AED] text-white shadow-md">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          {/* Left: Logo + Title */}
+    <main className="min-h-screen flex flex-col bg-[#F8F4F7] text-[#2D142C]">
+      <header className="bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#7C3AED] font-bold text-lg shadow-sm">
-              D
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
+              MES
             </div>
             <div>
-              <h1 className="font-bold text-lg leading-none">Team D Events</h1>
-              <p className="text-sm opacity-80">User Dashboard</p>
+              <h1 className="font-bold text-xl leading-none">Team D Events</h1>
+              <p className="text-sm opacity-80">User Experience Hub</p>
             </div>
           </div>
 
-          {/* Right: User Info */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <span className="text-sm hidden sm:inline">Hi, {user?.email}</span>
             {isLocalAuth && (
               <button
                 onClick={logout}
-                className="flex items-center space-x-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+                className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Logout</span>
+                Logout
               </button>
             )}
           </div>
         </div>
       </header>
 
-      {/* ✅ Main Content */}
-      <section className="flex-1 max-w-7xl mx-auto px-6 py-12">
-        {/* Welcome Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-            Welcome, {user?.email}
-          </h2>
-          <p className="text-gray-600">
-            Access your personal dashboard and manage your Team D event experience.
+      <section className="flex-1 max-w-6xl mx-auto px-6 py-12 space-y-10">
+        <div className="bg-white border border-[#F3D3DF] rounded-3xl shadow-md p-6">
+          <h2 className="text-3xl font-extrabold text-[#7A003C] mb-2">Welcome, {user?.email}</h2>
+          <p className="text-[#953363]">
+            Access your personal dashboard, stay informed on upcoming MES events, and manage your participation.
           </p>
         </div>
 
-        {/* ✅ Service Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {serviceCards.map((card) => (
             <ServiceCardItem
@@ -109,9 +101,8 @@ function UserDashboard() {
         </div>
       </section>
 
-      {/* ✅ Footer */}
-      <footer className="bg-gray-100 border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
-        © 2025 Team D Event Services. Large event support and coordination.
+      <footer className="bg-[#F3D3DF] text-[#7A003C] text-center py-6 text-sm">
+        © 2025 MES Team D. Large event support and coordination.
       </footer>
     </main>
   );
