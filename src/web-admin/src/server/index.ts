@@ -4,7 +4,7 @@ import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
 import { registerProfileRoutes } from './routes/profile';
 import { registerEventRoutes } from './routes/events';
-
+import { registerCheckInRoutes } from './routes/check-in';
 
 
 const fastify = Fastify({ logger: true });
@@ -57,6 +57,11 @@ try {
   await registerEventRoutes(fastify);
 } catch (error) {
   fastify.log.error({ err: error }, 'Failed to register event routes');
+}
+try {
+  await registerCheckInRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register check-in routes');
 }
 // Start server
 try {
