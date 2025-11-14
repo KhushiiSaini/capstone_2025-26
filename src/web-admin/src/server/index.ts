@@ -3,11 +3,8 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
 import { registerProfileRoutes } from './routes/profile';
-
-// import { db } from '../database/drizzle.config';
-// import { db } from '../../../database/drizzle.client'; // updated path
-// import { events, attendees, users } from '../../../database/src/schemas/alltables';
-// import { eq,gte } from 'drizzle-orm';
+import { registerEventRoutes } from './routes/events';
+import { registerCheckInRoutes } from './routes/check-in';
 
 
 const fastify = Fastify({ logger: true });
@@ -56,7 +53,16 @@ try {
 } catch (error) {
   fastify.log.error({ err: error }, 'Failed to register profile routes');
 }
-
+try {
+  await registerEventRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register event routes');
+}
+try {
+  await registerCheckInRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register check-in routes');
+}
 // Start server
 try {
   await fastify.listen({ port: PORT, host: '0.0.0.0' });

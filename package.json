@@ -21,7 +21,8 @@
     "clean": "pnpm -r clean"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "drizzle-kit": "^0.31.7"
   },
   "dependencies": {
     "@fastify/swagger": "^9.6.0",
