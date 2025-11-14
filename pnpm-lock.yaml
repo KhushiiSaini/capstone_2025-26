@@ -17,6 +17,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.7
         version: 0.44.7(@types/pg@8.15.6)(pg@8.16.3)
+      html5-qrcode:
+        specifier: ^2.3.8
+        version: 2.3.8
       lucide-react:
         specifier: ^0.553.0
         version: 0.553.0(react@19.2.0)
@@ -49,6 +52,31 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.9.3
+
+  src/portal:
+    dependencies:
+      react:
+        specifier: ^19.0.0
+        version: 19.2.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.0(react@19.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.0
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.0(@types/react@19.2.0)
+      '@vitejs/plugin-react':
+        specifier: ^4.3.2
+        version: 4.7.0(vite@5.4.20(@types/node@20.19.19))
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.20
+        version: 5.4.20(@types/node@20.19.19)
 
   src/web-admin:
     dependencies:

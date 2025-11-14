@@ -353,21 +353,6 @@ function ProfilePage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledTextArea
-                label="Emergency Contact"
-                value={formState.emergencyContact}
-                onChange={(value) => handleInputChange('emergencyContact', value)}
-                disabled={!isEditing}
-              />
-              <LabeledTextArea
-                label="Dietary Restrictions"
-                value={formState.dietaryRestrictions}
-                onChange={(value) => handleInputChange('dietaryRestrictions', value)}
-                disabled={!isEditing}
-              />
-            </div>
-
             <label className="flex items-center gap-3 text-[#7A003C] font-medium">
               <input
                 type="checkbox"

@@ -1,0 +1,120 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #2d142c;
+  background-color: #f9e3f3;
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+.portal-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+.portal-shell {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.portal-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.portal-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 0.7rem;
+  color: #af668a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.portal-title {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  color: #7a003c;
+  font-weight: 800;
+  margin: 0;
+}
+
+.portal-lede {
+  color: rgba(122, 0, 60, 0.75);
+  font-size: 1rem;
+  margin: 0 auto;
+  max-width: 36rem;
+}
+
+.portal-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.portal-card {
+  border-radius: 28px;
+  padding: 2.5rem;
+  text-align: left;
+  box-shadow: 0 18px 40px rgba(149, 51, 99, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.portal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px rgba(149, 51, 99, 0.15);
+}
+
+.portal-icon {
+  color: #7a003c;
+}
+
+.portal-card-title {
+  font-size: 1.3rem;
+  color: #7a003c;
+  margin: 0;
+  font-weight: 700;
+}
+
+.portal-card-copy {
+  margin: 0;
+  color: #953363;
+  font-size: 0.95rem;
+}
+
+.portal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: white;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  margin-top: 0.5rem;
+}

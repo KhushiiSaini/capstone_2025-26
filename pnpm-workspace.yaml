@@ -3,5 +3,5 @@ packages:
   - 'src/web-user'
   - 'src/api'
   - 'src/mobile'
-  - 'src/shared'
+  - 'src/portal'
   - 'src/database'
