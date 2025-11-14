@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, useRef, type HTMLInputTypeAttribute } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Calendar, User, ChartBar } from 'lucide-react';
 import { getCurrentUser } from '../lib/auth';
+import ProtectedTeamPortal from '../components/ProtectedTeamPortal';
 
 type User = {
   id: number;
@@ -78,6 +80,12 @@ const emptyForm: UserForm = {
   pronouns: '',
 };
 
+const sidebarLinks = [
+  { title: 'Event Manager', icon: Calendar, path: '/events' },
+  { title: 'User Profile', icon: User, path: '/profile' },
+  { title: 'Analytics', icon: ChartBar, path: '/analytics' },
+];
+
 export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 });
@@ -93,40 +101,47 @@ function ProfilePage() {
   });
 
   const [formState, setFormState] = useState<UserForm>(emptyForm);
-  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const syncFormWithUser = (target: User) => {
+    setFormState({
+      firstName: target.firstName ?? '',
+      lastName: target.lastName ?? '',
+      preferredName: target.preferredName ?? '',
+      email: target.email ?? '',
+      phoneNumber: target.phoneNumber ?? '',
+      dob: target.dob ? target.dob.slice(0, 10) : '',
+      dietaryRestrictions: target.dietaryRestrictions ?? '',
+      emergencyContact: target.emergencyContact ?? '',
+      mediaConsent: Boolean(target.mediaConsent),
+      program: target.program ?? '',
+      year: target.year ?? '',
+      studentNumber: target.studentNumber ?? '',
+      pronouns: target.pronouns ?? '',
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
-    setFormState({
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
-      preferredName: user.preferredName ?? '',
-      email: user.email ?? '',
-      phoneNumber: user.phoneNumber ?? '',
-      dob: user.dob ? user.dob.slice(0, 10) : '',
-      dietaryRestrictions: user.dietaryRestrictions ?? '',
-      emergencyContact: user.emergencyContact ?? '',
-      mediaConsent: Boolean(user.mediaConsent),
-      program: user.program ?? '',
-      year: user.year ?? '',
-      studentNumber: user.studentNumber ?? '',
-      pronouns: user.pronouns ?? '',
-    });
-    setStatusMessage(null);
+    syncFormWithUser(user);
+    setIsEditing(false);
   }, [user]);
 
-const mutation = useMutation({
-  mutationFn: updateUser,
-  onSuccess: (updatedUser) => {
-    queryClient.setQueryData(['admin-profile', currentEmail], updatedUser);
-    setStatusMessage({ type: 'success', message: 'Changes saved successfully.' });
-    setTimeout(() => setStatusMessage(null), 3000);
-  },
-  onError: (mutationError: unknown) => {
-    const message = mutationError instanceof Error ? mutationError.message : 'Failed to update profile';
-    setStatusMessage({ type: 'error', message });
-  },
-});
+  const mutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(['admin-profile', currentEmail], updatedUser);
+      setToast({ type: 'success', message: 'Changes saved successfully.' });
+      setIsEditing(false);
+      setTimeout(() => setToast(null), 3000);
+    },
+    onError: (mutationError: unknown) => {
+      const message = mutationError instanceof Error ? mutationError.message : 'Failed to update profile';
+      setToast({ type: 'error', message });
+      setTimeout(() => setToast(null), 3000);
+    },
+  });
 
   if (!currentEmail) {
     return (
@@ -161,81 +176,116 @@ const mutation = useMutation({
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!isEditing) return;
     mutation.mutate({ id: user.id, data: formState });
   };
 
-  const handleReset = () => {
-    if (user) {
-      setFormState({
-        firstName: user.firstName ?? '',
-        lastName: user.lastName ?? '',
-        preferredName: user.preferredName ?? '',
-        email: user.email ?? '',
-        phoneNumber: user.phoneNumber ?? '',
-        dob: user.dob ? user.dob.slice(0, 10) : '',
-        dietaryRestrictions: user.dietaryRestrictions ?? '',
-        emergencyContact: user.emergencyContact ?? '',
-        mediaConsent: Boolean(user.mediaConsent),
-        program: user.program ?? '',
-        year: user.year ?? '',
-        studentNumber: user.studentNumber ?? '',
-        pronouns: user.pronouns ?? '',
-      });
-      setStatusMessage(null);
+  const handleEditToggle = () => {
+    if (isEditing && user) {
+      syncFormWithUser(user);
     }
+    setIsEditing((prev) => !prev);
   };
 
   const displayName = user.preferredName || `${user.firstName} ${user.lastName}`;
 
   return (
-    <main className="min-h-screen bg-[#FFFFFF] p-6 sm:p-10">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <header>
-          <p className="text-sm uppercase tracking-wide text-[#AF668A] mb-2">
-            Welcome Back
-          </p>
-          <h1 className="text-4xl font-extrabold text-[#7A003C]">
-            {displayName}
-          </h1>
-          <p className="text-[#953363] mt-2">
-            Review and update your personal information. Changes save instantly.
-          </p>
-        </header>
+    <ProtectedTeamPortal>
+    <main className="min-h-screen bg-[#FFFFFF] flex flex-col lg:flex-row relative">
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 z-50 rounded-xl px-4 py-3 text-white shadow-lg ${
+            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
 
-        <section className="bg-white border border-[#F3D3DF] rounded-2xl shadow-md p-6 lg:p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-sm text-[#AF668A]">Account</p>
-              <h2 className="text-2xl font-semibold text-[#7A003C]">
-                {user.email}
-              </h2>
-              <p className="text-xs text-[#CA99B1] mt-1">
-                Profile ID #{user.id} · Last updated {new Date(user.updatedAt).toLocaleString()}
-              </p>
+      <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
+        <div className="text-center lg:text-left">
+          <h2 className="text-3xl text-[#FFFFFF] flex items-center space-x-2 font-extrabold">
+            <span>Admin Dashboard</span>
+            <span className="w-6 h-6 bg-gradient-to-tr from-[#953363] to-[#AF668A] rounded-full flex-shrink-0" />
+          </h2>
+          <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full" />
+        </div>
+
+        <div className="flex flex-col space-y-4">
+          {sidebarLinks.map((link) => (
+            <button
+              key={link.title}
+              onClick={() => navigate({ to: link.path })}
+              className={`flex items-center p-4 rounded-xl transition-all shadow-md ${
+                link.path === '/profile' ? 'bg-[#AF668A] text-white' : 'bg-[#953363] text-white hover:bg-[#AF668A]'
+              }`}
+            >
+              <link.icon className="w-6 h-6 mr-3" />
+              <span className="font-medium">{link.title}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      <section className="flex-1 p-6 sm:p-10">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <header>
+            <p className="text-sm uppercase tracking-wide text-[#AF668A] mb-2">
+              Welcome Back
+            </p>
+            <h1 className="text-4xl font-extrabold text-[#7A003C]">
+              {displayName}
+            </h1>
+            <p className="text-[#953363] mt-2">
+              Review and update your personal information. Changes save instantly.
+            </p>
+          </header>
+
+          <section className="bg-white border border-[#F3D3DF] rounded-2xl shadow-md p-6 lg:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-sm text-[#AF668A]">Account</p>
+                <h2 className="text-2xl font-semibold text-[#7A003C]">
+                  {user.email}
+                </h2>
+                <p className="text-xs text-[#CA99B1] mt-1">
+                  Profile ID #{user.id} · Last updated {new Date(user.updatedAt).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleEditToggle}
+                className="px-4 py-2 border border-[#CA99B1] text-[#7A003C] rounded-xl font-semibold hover:bg-[#FDF4F8]"
+              >
+                {isEditing ? 'Cancel' : 'Edit'}
+              </button>
             </div>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+            <form onSubmit={handleSubmit} className="space-y-6 mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <LabeledInput
                 label="First Name"
                 value={formState.firstName}
                 onChange={(value) => handleInputChange('firstName', value)}
+                disabled={!isEditing}
               />
               <LabeledInput
                 label="Last Name"
                 value={formState.lastName}
                 onChange={(value) => handleInputChange('lastName', value)}
+                disabled={!isEditing}
               />
               <LabeledInput
                 label="Preferred Name"
                 value={formState.preferredName}
                 onChange={(value) => handleInputChange('preferredName', value)}
+                disabled={!isEditing}
               />
               <LabeledSelect
                 label="Pronouns"
                 value={formState.pronouns}
                 onChange={(value) => handleInputChange('pronouns', value)}
+                disabled={!isEditing}
                 options={[
                   { label: 'Select pronouns', value: '' },
                   { label: 'She / Her', value: 'She/Her' },
@@ -253,11 +303,13 @@ const mutation = useMutation({
                 type="email"
                 value={formState.email}
                 onChange={(value) => handleInputChange('email', value)}
+                disabled
               />
               <LabeledInput
                 label="Phone Number"
                 value={formState.phoneNumber}
                 onChange={(value) => handleInputChange('phoneNumber', value)}
+                disabled={!isEditing}
               />
             </div>
 
@@ -266,11 +318,13 @@ const mutation = useMutation({
                 label="Program"
                 value={formState.program}
                 onChange={(value) => handleInputChange('program', value)}
+                disabled={!isEditing}
               />
                 <LabeledSelect
                   label="Year"
                   value={formState.year}
                   onChange={(value) => handleInputChange('year', value)}
+                  disabled={!isEditing}
                   options={[
                     { label: 'Select year', value: '' },
                     { label: '1', value: '1' },
@@ -289,11 +343,13 @@ const mutation = useMutation({
                 label="Student Number"
                 value={formState.studentNumber}
                 onChange={(value) => handleInputChange('studentNumber', value)}
+                disabled={!isEditing}
               />
               <LabeledDatePicker
                 label="Date of Birth"
                 value={formState.dob}
                 onChange={(value) => handleInputChange('dob', value)}
+                disabled={!isEditing}
               />
             </div>
 
@@ -302,11 +358,13 @@ const mutation = useMutation({
                 label="Emergency Contact"
                 value={formState.emergencyContact}
                 onChange={(value) => handleInputChange('emergencyContact', value)}
+                disabled={!isEditing}
               />
               <LabeledTextArea
                 label="Dietary Restrictions"
                 value={formState.dietaryRestrictions}
                 onChange={(value) => handleInputChange('dietaryRestrictions', value)}
+                disabled={!isEditing}
               />
             </div>
 
@@ -316,21 +374,10 @@ const mutation = useMutation({
                 className="h-5 w-5 rounded border-[#CA99B1] text-[#7A003C] focus:ring-[#7A003C]"
                 checked={formState.mediaConsent}
                 onChange={(event) => handleInputChange('mediaConsent', event.target.checked)}
+                disabled={!isEditing}
               />
               Media consent received
             </label>
-
-            {statusMessage && (
-              <div
-                className={`rounded-xl px-4 py-3 text-sm font-medium ${
-                  statusMessage.type === 'success'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                }`}
-              >
-                {statusMessage.message}
-              </div>
-            )}
 
             <div className="flex flex-wrap gap-4 pt-2">
               <button
@@ -342,7 +389,7 @@ const mutation = useMutation({
               </button>
               <button
                 type="submit"
-                disabled={mutation.status === 'pending'}
+                disabled={!isEditing || mutation.status === 'pending'}
                 className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
               >
                 {mutation.status === 'pending' ? 'Saving…' : 'Save Changes'}
@@ -351,7 +398,9 @@ const mutation = useMutation({
           </form>
         </section>
       </div>
+    </section>
     </main>
+  </ProtectedTeamPortal>
   );
 }
 
@@ -360,15 +409,17 @@ interface LabeledInputProps {
   value: string;
   onChange: (value: string) => void;
   type?: HTMLInputTypeAttribute;
+  disabled?: boolean;
 }
 
-function LabeledInput({ label, value, onChange, type = 'text' }: LabeledInputProps) {
+function LabeledInput({ label, value, onChange, type = 'text', disabled = false }: LabeledInputProps) {
   return (
     <label className="flex flex-col text-sm font-medium text-[#7A003C] gap-1">
       {label}
       <input
         type={type}
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className="rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-[#7A003C]"
       />
@@ -380,16 +431,19 @@ function LabeledTextArea({
   label,
   value,
   onChange,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col text-sm font-medium text-[#7A003C] gap-1">
       {label}
       <textarea
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className="rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base min-h-[96px] focus:outline-none focus:ring-2 focus:ring-[#7A003C]"
       />
@@ -402,11 +456,13 @@ function LabeledSelect({
   value,
   onChange,
   options,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: Array<{ label: string; value: string }>;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -429,13 +485,14 @@ function LabeledSelect({
       <div ref={containerRef} className="relative">
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full rounded-xl border border-[#F3D3DF] bg-white px-4 py-2.5 text-left text-base text-[#7A003C] focus:outline-none focus:ring-2 focus:ring-[#7A003C] flex items-center justify-between"
+          disabled={disabled}
+          onClick={() => !disabled && setIsOpen((prev) => !prev)}
+          className="w-full rounded-xl border border-[#F3D3DF] bg-white px-4 py-2.5 text-left text-base text-[#7A003C] focus:outline-none focus:ring-2 focus:ring-[#7A003C] flex items-center justify-between disabled:opacity-60"
         >
           <span>{selectedOption?.label ?? 'Select an option'}</span>
           <span className="text-xs text-[#953363]">▼</span>
         </button>
-        {isOpen && (
+        {isOpen && !disabled && (
           <ul className="absolute z-10 mt-2 max-h-48 w-full overflow-auto rounded-xl border border-[#F3D3DF] bg-white shadow-lg">
             {options.map((option) => {
               const isSelected = option.value === value;
@@ -469,10 +526,12 @@ function LabeledDatePicker({
   label,
   value,
   onChange,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col text-sm font-medium text-[#7A003C] gap-1">
@@ -481,6 +540,7 @@ function LabeledDatePicker({
         <input
           type="date"
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
           className="appearance-none rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-[#7A003C] w-full text-[#7A003C]"
         />

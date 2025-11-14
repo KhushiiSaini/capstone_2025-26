@@ -59,6 +59,8 @@ function ProfilePage() {
 
   const [formState, setFormState] = useState<UserProfile | null>(null);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -74,12 +76,16 @@ function ProfilePage() {
     mutationFn: updateProfile,
     onSuccess: (updated) => {
       queryClient.setQueryData(['user-profile'], updated);
-      setStatus({ type: 'success', message: 'Changes saved successfully.' });
+      setStatus(null);
+      setToast({ type: 'success', message: 'Changes saved successfully.' });
+      setIsEditing(false);
+      setTimeout(() => setToast(null), 3000);
       setTimeout(() => setStatus(null), 3000);
     },
     onError: (err: unknown) => {
       const message = err instanceof Error ? err.message : 'Failed to update profile';
-      setStatus({ type: 'error', message });
+      setToast({ type: 'error', message });
+      setTimeout(() => setToast(null), 3000);
     },
   });
 
@@ -101,12 +107,22 @@ function ProfilePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isEditing) return;
     const payload = { ...formState, dob: formState.dob || null };
     mutation.mutate(payload);
   };
 
   return (
-    <main className="min-h-screen bg-[#FFFFFF] p-6 sm:p-10">
+    <main className="min-h-screen bg-[#FFFFFF] p-6 sm:p-10 relative">
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 z-50 rounded-xl px-4 py-3 text-white shadow-lg ${
+            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
       <div className="max-w-4xl mx-auto space-y-8">
         <header>
           <p className="text-sm uppercase tracking-wide text-[#AF668A] mb-2">Your Profile</p>
@@ -124,26 +140,45 @@ function ProfilePage() {
               <p className="text-sm text-[#AF668A]">Account</p>
               <h2 className="text-xl font-semibold text-[#7A003C]">{user?.email}</h2>
             </div>
-            {status && (
-              <span
-                className={`text-sm font-medium ${
-                  status.type === 'success' ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                {status.message}
-              </span>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                if (isEditing) {
+                  setFormState(profile ? { ...profile, dob: profile.dob ? profile.dob.slice(0, 10) : '' } : formState);
+                }
+                setIsEditing((prev) => !prev);
+              }}
+              className="px-4 py-2 border border-[#CA99B1] text-[#7A003C] rounded-xl font-semibold hover:bg-[#FDF4F8]"
+            >
+              {isEditing ? 'Cancel' : 'Edit'}
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput label="First Name" value={formState.firstName || ''} onChange={(v) => handleChange('firstName', v)} />
-              <LabeledInput label="Last Name" value={formState.lastName || ''} onChange={(v) => handleChange('lastName', v)} />
-              <LabeledInput label="Preferred Name" value={formState.preferredName || ''} onChange={(v) => handleChange('preferredName', v)} />
+              <LabeledInput
+                label="First Name"
+                value={formState.firstName || ''}
+                onChange={(v) => handleChange('firstName', v)}
+                disabled={!isEditing}
+              />
+              <LabeledInput
+                label="Last Name"
+                value={formState.lastName || ''}
+                onChange={(v) => handleChange('lastName', v)}
+                disabled={!isEditing}
+              />
+              <LabeledInput
+                label="Preferred Name"
+                value={formState.preferredName || ''}
+                onChange={(v) => handleChange('preferredName', v)}
+                disabled={!isEditing}
+              />
               <LabeledSelect
                 label="Pronouns"
                 value={formState.pronouns || ''}
                 onChange={(v) => handleChange('pronouns', v)}
+                disabled={!isEditing}
                 options={[
                   { label: 'Select pronouns', value: '' },
                   { label: 'She / Her', value: 'She/Her' },
@@ -156,12 +191,13 @@ function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput label="Phone Number" value={formState.phoneNumber || ''} onChange={(v) => handleChange('phoneNumber', v)} />
-              <LabeledInput label="Program" value={formState.program || ''} onChange={(v) => handleChange('program', v)} />
+              <LabeledInput label="Phone Number" value={formState.phoneNumber || ''} onChange={(v) => handleChange('phoneNumber', v)} disabled={!isEditing} />
+              <LabeledInput label="Program" value={formState.program || ''} onChange={(v) => handleChange('program', v)} disabled={!isEditing} />
               <LabeledSelect
                 label="Year"
                 value={formState.year || ''}
                 onChange={(v) => handleChange('year', v)}
+                disabled={!isEditing}
                 options={[
                   { label: 'Select year', value: '' },
                   { label: '1', value: '1' },
@@ -177,6 +213,7 @@ function ProfilePage() {
                 label="Date of Birth"
                 value={formState.dob || ''}
                 onChange={(v) => handleChange('dob', v)}
+                disabled={!isEditing}
               />
             </div>
 
@@ -186,8 +223,8 @@ function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledTextArea label="Emergency Contact" value={formState.emergencyContact || ''} onChange={(v) => handleChange('emergencyContact', v)} />
-              <LabeledTextArea label="Dietary Restrictions" value={formState.dietaryRestrictions || ''} onChange={(v) => handleChange('dietaryRestrictions', v)} />
+              <LabeledTextArea label="Emergency Contact" value={formState.emergencyContact || ''} onChange={(v) => handleChange('emergencyContact', v)} disabled={!isEditing} />
+              <LabeledTextArea label="Dietary Restrictions" value={formState.dietaryRestrictions || ''} onChange={(v) => handleChange('dietaryRestrictions', v)} disabled={!isEditing} />
             </div>
 
             <label className="flex items-center gap-3 text-[#7A003C] font-medium">
@@ -196,6 +233,7 @@ function ProfilePage() {
                 className="h-5 w-5 rounded border-[#CA99B1] text-[#7A003C] focus:ring-[#7A003C]"
                 checked={Boolean(formState.mediaConsent)}
                 onChange={(e) => handleChange('mediaConsent', e.target.checked)}
+                disabled={!isEditing}
               />
               Media consent received
             </label>
@@ -254,16 +292,19 @@ function LabeledTextArea({
   label,
   value,
   onChange,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col text-sm font-medium text-[#7A003C] gap-1">
       {label}
       <textarea
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className="rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base min-h-[96px] focus:outline-none focus:ring-2 focus:ring-[#7A003C]"
       />
@@ -276,11 +317,13 @@ function LabeledSelect({
   value,
   onChange,
   options,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: Array<{ label: string; value: string }>;
+  disabled?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -303,13 +346,14 @@ function LabeledSelect({
       <div ref={containerRef} className="relative">
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="w-full rounded-xl border border-[#F3D3DF] bg-white px-4 py-2.5 text-left text-base text-[#7A003C] focus:outline-none focus:ring-2 focus:ring-[#7A003C] flex items-center justify-between"
+          disabled={disabled}
+          onClick={() => !disabled && setIsOpen((prev) => !prev)}
+          className="w-full rounded-xl border border-[#F3D3DF] bg-white px-4 py-2.5 text-left text-base text-[#7A003C] focus:outline-none focus:ring-2 focus:ring-[#7A003C] flex items-center justify-between disabled:opacity-60"
         >
           <span>{selectedOption?.label ?? 'Select an option'}</span>
           <span className="text-xs text-[#953363]">▼</span>
         </button>
-        {isOpen && (
+        {isOpen && !disabled && (
           <ul className="absolute z-10 mt-2 max-h-48 w-full overflow-auto rounded-xl border border-[#F3D3DF] bg-white shadow-lg">
             {options.map((option) => {
               const isSelected = option.value === value;
@@ -341,20 +385,23 @@ function LabeledDatePicker({
   label,
   value,
   onChange,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="flex flex-col text-sm font-medium text-[#7A003C] gap-1">
       {label}
       <input
-        type="date"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-[#7A003C]"
-      />
+          type="date"
+          value={value}
+          disabled={disabled}
+          onChange={(event) => onChange(event.target.value)}
+          className="rounded-xl border border-[#F3D3DF] px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-[#7A003C]"
+        />
     </label>
   );
 }
