@@ -65,6 +65,7 @@ export async function registerEventRoutes(fastify: FastifyInstance) {
     }
   });
 
+  
   // Create new event
   fastify.post('/api/events', async (request, reply) => {
     const body = request.body as Partial<typeof schema.events.$inferInsert>;
@@ -83,30 +84,30 @@ export async function registerEventRoutes(fastify: FastifyInstance) {
   });
 
   // Optional: update event
-  fastify.put('/api/events/:id', async (request, reply) => {
-    const { id } = request.params as { id: string };
-    const eventId = Number(id);
-    const body = request.body as Partial<typeof schema.events.$inferInsert>;
+  // fastify.put('/api/events/:id', async (request, reply) => {
+  //   const { id } = request.params as { id: string };
+  //   const eventId = Number(id);
+  //   const body = request.body as Partial<typeof schema.events.$inferInsert>;
 
-    if (Number.isNaN(eventId)) {
-      return reply.code(400).send({ error: 'Invalid event id' });
-    }
+  //   if (Number.isNaN(eventId)) {
+  //     return reply.code(400).send({ error: 'Invalid event id' });
+  //   }
 
-    try {
-      const [updatedEvent] = await db
-        .update(schema.events)
-        .set({ ...body, updatedAt: new Date() })
-        .where(eq(schema.events.id, eventId))
-        .returning();
+  //   try {
+  //     const [updatedEvent] = await db
+  //       .update(schema.events)
+  //       .set({ ...body, updatedAt: new Date() })
+  //       .where(eq(schema.events.id, eventId))
+  //       .returning();
 
-      if (!updatedEvent) {
-        return reply.code(404).send({ error: 'Event not found' });
-      }
+  //     if (!updatedEvent) {
+  //       return reply.code(404).send({ error: 'Event not found' });
+  //     }
 
-      return updatedEvent;
-    } catch (error) {
-      fastify.log.error({ err: error }, 'Failed to update event');
-      return reply.code(500).send({ error: 'Failed to update event' });
-    }
-  });
+  //     return updatedEvent;
+  //   } catch (error) {
+  //     fastify.log.error({ err: error }, 'Failed to update event');
+  //     return reply.code(500).send({ error: 'Failed to update event' });
+  //   }
+  // });
 }
