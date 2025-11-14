@@ -7,7 +7,7 @@ import { getCurrentUser, AuthUser } from '../lib/auth';
 // Mock data
 const mockEvents = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
-  title: `Event ${i + 1}`,
+  name: `Event ${i + 1}`,
   date: `2025-12-${(i % 30) + 1}`,
   location: `Location ${i + 1}`,
   attendees: Array.from({ length: (i % 10) + 1 }, (_, j) => ({
@@ -22,7 +22,7 @@ const sidebarLinks = [
   { title: 'Analytics', icon: ChartBar, path: '/analytics' },
 ];
 
-type SortKey = 'title' | 'date' | 'location' | 'registered' | 'waivers';
+type SortKey = 'name' | 'date' | 'location' | 'registered' | 'waivers';
 
 function EventManagerPage() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -32,35 +32,69 @@ function EventManagerPage() {
   const navigate = useNavigate();
   const activePath = useRouterState({ select: (state) => state.location.pathname });
 
-  useEffect(() => {
-    setUser(getCurrentUser());
-    setEvents(mockEvents);
-  }, []);
-
-// function EventManagerPage() {
-//   const [user, setUser] = useState<AuthUser | null>(null);
-//   const [events, setEvents] = useState<any[]>([]); // real events from API
-//   const [sortKey, setSortKey] = useState<SortKey>('date');
-//   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-//   const navigate = useNavigate();
-
+  // useEffect(() => {
+  //   setUser(getCurrentUser());
+  //   setEvents(mockEvents);
+  // }, []);
 //   useEffect(() => {
-//     setUser(getCurrentUser());
+//   setUser(getCurrentUser());
 
-//     // Fetch events from your Fastify API
-//     const fetchEvents = async () => {
-//       try {
-//         const res = await fetch('/api/events'); // adjust path if needed
-//         if (!res.ok) throw new Error('Failed to fetch events');
-//         const data = await res.json();
-//         setEvents(data);
-//       } catch (err) {
-//         console.error(err);
-//       }
-//     };
+//   async function fetchEvents() {
+//     try {
+//       const response = await fetch('/api/events'); // Replace with your API endpoint
+//       if (!response.ok) throw new Error('Failed to fetch events');
 
-//     fetchEvents();
-//   }, []);
+//       const data = await response.json();
+//       setEvents(data); // Make sure API returns events in the same structure as mockEvents
+//     } catch (error) {
+//       console.error('Error fetching events:', error);
+//       setEvents([]); // Optional: clear events on error
+//     }
+//   }
+
+//   fetchEvents();
+// }, []);
+
+useEffect(() => {
+  setUser(getCurrentUser());
+
+  async function fetchEventsWithAttendees() {
+    try {
+      // 1️⃣ Fetch all events
+      const eventsRes = await fetch('/api/events');
+      if (!eventsRes.ok) throw new Error('Failed to fetch events');
+      const eventsData: any[] = await eventsRes.json();
+
+      // 2️⃣ Fetch attendees for each event
+      const eventsWithAttendees = await Promise.all(
+        eventsData.map(async (event) => {
+          try {
+            const attendeesRes = await fetch(`/api/events/${event.id}/attendees`);
+            const attendees = attendeesRes.ok ? await attendeesRes.json() : [];
+            
+            // Map API attendee fields to your component expectations
+            const mappedAttendees = attendees.map((a: any) => ({
+              name: a.email, // or a snapshot of user name if available
+              waiver: a.waiverSigned,
+            }));
+
+            return { ...event, attendees: mappedAttendees };
+          } catch (err) {
+            console.error(`Failed to fetch attendees for event ${event.id}:`, err);
+            return { ...event, attendees: [] };
+          }
+        })
+      );
+
+      setEvents(eventsWithAttendees);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setEvents([]);
+    }
+  }
+
+  fetchEventsWithAttendees();
+}, []);
 
 
   const now = new Date();
@@ -77,9 +111,9 @@ function EventManagerPage() {
     let bValue: string | number = '';
 
     switch (sortKey) {
-      case 'title':
-        aValue = a.title.toLowerCase();
-        bValue = b.title.toLowerCase();
+      case 'name':
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
         break;
       case 'date':
         aValue = new Date(a.date).getTime();
@@ -174,10 +208,18 @@ function EventManagerPage() {
                 className="bg-[#F9E9F0] border border-[#CA99B1] rounded-2xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-[#7A003C]">{event.title}</h3>
+                  <h3 className="text-lg font-semibold text-[#7A003C]">{event.name}</h3>
                   <Calendar className="w-6 h-6 text-[#953363]" />
                 </div>
-                <p className="text-sm text-[#953363]">{event.date}</p>
+                {/* <p className="text-sm text-[#953363]">{event.date}</p> */}
+                <p className="text-sm text-[#953363]">
+                  {new Date(event.date).toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+
                 <p className="text-sm text-[#AF668A] mb-2">{event.location}</p>
                 <div className="flex justify-between text-[#7A003C] text-sm mb-2">
                   <span>Registered:</span>
@@ -188,10 +230,10 @@ function EventManagerPage() {
                   <span>{waivers}/{total}</span>
                 </div>
                 <button
-                  onClick={() => navigate({ to: `/events/${event.id}/attendees` })}
+                  onClick={() => navigate({ to: `/events/${event.id}` })}
                   className="mt-auto bg-[#953363] text-white text-sm rounded-lg py-1 hover:bg-[#AF668A] transition"
                 >
-                  View Attendees
+                  View Info
                 </button>
               </div>
             );
@@ -206,9 +248,9 @@ function EventManagerPage() {
               <tr>
                 <th
                   className="px-4 py-2 text-left text-[#7A003C] cursor-pointer"
-                  onClick={() => handleSort('title')}
+                  onClick={() => handleSort('name')}
                 >
-                  Title {sortKey === 'title' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                  Name {sortKey === 'name' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </th>
                 <th
                   className="px-4 py-2 text-left text-[#7A003C] cursor-pointer"
@@ -222,38 +264,46 @@ function EventManagerPage() {
                 >
                   Location {sortKey === 'location' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </th>
-                <th
+                {/* <th
                   className="px-4 py-2 text-left text-[#7A003C] cursor-pointer"
                   onClick={() => handleSort('registered')}
                 >
                   Registered {sortKey === 'registered' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
-                </th>
-                <th
+                </th> */}
+                {/* <th
                   className="px-4 py-2 text-left text-[#7A003C] cursor-pointer"
                   onClick={() => handleSort('waivers')}
                 >
                   Waivers {sortKey === 'waivers' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
-                </th>
+                </th> */}
                 <th className="px-4 py-2 text-left text-[#7A003C]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sortedEvents.map((event) => {
                 const total = event.attendees.length;
-                const waivers = event.attendees.filter((a) => a.waiver).length;
+                // const waivers = event.attendees.filter((a) => a.waiver).length;
                 return (
                   <tr key={event.id} className="border-b border-[#CA99B1] hover:bg-[#F4E4ED] transition">
-                    <td className="px-4 py-2 text-[#7A003C]">{event.title}</td>
-                    <td className="px-4 py-2 text-[#953363]">{event.date}</td>
+                    <td className="px-4 py-2 text-[#7A003C]">{event.name}</td>
+                    {/* <td className="px-4 py-2 text-[#953363]">{event.date}</td> */}
+                    <td className="px-4 py-2 text-[#953363]">
+                      {new Date(event.date).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                      })}
+                    </td>
+
                     <td className="px-4 py-2 text-[#AF668A]">{event.location}</td>
-                    <td className="px-4 py-2 text-[#7A003C]">{total}</td>
-                    <td className="px-4 py-2 text-[#7A003C]">{waivers}/{total}</td>
+                    {/* <td className="px-4 py-2 text-[#7A003C]">{total}</td> */}
+                    {/* <td className="px-4 py-2 text-[#7A003C]">{waivers}/{total}</td> */}
                     <td className="px-4 py-2 space-x-2 flex flex-wrap">
                       <button
-                        onClick={() => navigate({ to: `/events/${event.id}/attendees` })}
+                        onClick={() => navigate({ to: `/events/${event.id}` })}
                         className="flex items-center px-2 py-1 border border-[#953363] text-[#953363] rounded-lg hover:bg-[#953363]/10 transition text-sm"
                       >
-                        <Users className="w-3 h-3 mr-1" /> Attendees
+                        <Users className="w-3 h-3 mr-1" /> View
                       </button>
                       <button
                         onClick={() => navigate({ to: `/events/${event.id}/notifications` })}
@@ -262,7 +312,7 @@ function EventManagerPage() {
                         <Send className="w-3 h-3 mr-1" /> Notify
                       </button>
                       <button
-                        onClick={() => navigate({ to: `/events/${event.id}/checkin` })}
+                        onClick={() => navigate({ to: `/events/${event.id}/check-in` })}
                         className="flex items-center px-2 py-1 border border-[#953363] text-[#953363] rounded-lg hover:bg-[#953363]/10 transition text-sm"
                       >
                         <QrCode className="w-3 h-3 mr-1" /> Check-In
@@ -289,4 +339,5 @@ function ProtectedEventManager() {
 
 export const Route = createFileRoute('/events')({
   component: ProtectedEventManager,
+
 });
