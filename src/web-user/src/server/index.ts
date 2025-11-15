@@ -4,6 +4,7 @@ import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
 import { createTeamDDatabase } from '@teamd/database';
 import { desc } from 'drizzle-orm';
+import { registerEventRoutes } from './routes/events';
 
 const fastify = Fastify({ logger: true });
 const PORT = 3114;
@@ -342,6 +343,7 @@ async function start() {
   await initializeDatabase();
   
   try {
+    await registerEventRoutes(fastify);
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`Team D User server running on http://localhost:${PORT}`);
   } catch (err) {

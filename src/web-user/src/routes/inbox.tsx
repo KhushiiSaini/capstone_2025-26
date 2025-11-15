@@ -14,6 +14,7 @@ const heroImageUrl =
 type NotificationItem = {
   id: number
   eventId?: number | null
+  eventName?: string
   message: string
   recipients?: unknown
   createdAt: string
@@ -38,15 +39,61 @@ function RouteComponent() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
+  // Compute selected notification
+  const filteredNotifications =
+    filter === 'unread'
+      ? notifications.filter((n) => !n.read)
+      : notifications
+
+  const selected =
+    selectedId != null
+      ? notifications.find((n) => n.id === selectedId) ?? null
+      : filteredNotifications[0] ?? null
+
   // Fetch from database and update state
   useEffect(() => {
     if (apiNotifications && apiNotifications.length > 0) {
       setNotifications(apiNotifications)
+      // Fetch event names for all notifications with eventId
+      fetchEventNamesForAllNotifications(apiNotifications)
     } else if (!isLoading && apiNotifications.length === 0) {
       // Database has no notifications
       setNotifications([])
     }
   }, [apiNotifications, isLoading])
+
+  // Fetch event names for all notifications
+  const fetchEventNamesForAllNotifications = async (notifs: NotificationItem[]) => {
+    const controller = new AbortController()
+    try {
+      const updatedNotifications = await Promise.all(
+        notifs.map(async (notification) => {
+          if (!notification.eventId || notification.eventName) {
+            return notification
+          }
+          try {
+            const res = await fetch(`/api/events/${notification.eventId}`, {
+              signal: controller.signal,
+            })
+            if (!res.ok) {
+              throw new Error(`Failed to fetch event: ${res.status}`)
+            }
+            const data = await res.json()
+            const name = data?.name ?? `Event ID ${notification.eventId}`
+            return { ...notification, eventName: name }
+          } catch (err: any) {
+            if (err.name === 'AbortError') return notification
+            console.error(`Error fetching event name for ${notification.eventId}:`, err)
+            return { ...notification, eventName: `Event ID ${notification.eventId}` }
+          }
+        }),
+      )
+      setNotifications(updatedNotifications)
+    } catch (err) {
+      console.error('Error in fetchEventNamesForAllNotifications:', err)
+    }
+  }
+
 
   const handleMarkAsRead = (id: number) => {
     setNotifications((prev) =>
@@ -60,16 +107,6 @@ function RouteComponent() {
   const handleMarkAllAsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }
-
-  const filteredNotifications =
-    filter === 'unread'
-      ? notifications.filter((n) => !n.read)
-      : notifications
-
-  const selected =
-    selectedId != null
-      ? notifications.find((n) => n.id === selectedId) ?? null
-      : filteredNotifications[0] ?? null
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
@@ -318,7 +355,7 @@ function RouteComponent() {
                               color: '#7A003C',
                             }}
                           >
-                            {n.message.split('.')[0]}
+                            {n.eventName}
                           </span>
                         </div>
                         <p
@@ -388,7 +425,7 @@ function RouteComponent() {
                           fontWeight: 700,
                         }}
                       >
-                        {selected.message.split('.')[0]}
+                        {selected.eventName}
                       </h2>
                       <p
                         style={{
