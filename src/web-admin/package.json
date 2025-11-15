@@ -24,6 +24,7 @@
     "fastify": "^5.2.0",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.553.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-qr-scanner": "1.0.0-alpha.11"
