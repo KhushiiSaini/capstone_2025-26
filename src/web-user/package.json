@@ -26,6 +26,7 @@
     "date-fns": "^4.1.0",
     "fastify": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.553.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "styled-components": "^6.1.19"

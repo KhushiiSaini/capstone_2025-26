@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import { createFileRoute } from '@tanstack/react-router';
-=======
 // import { createFileRoute } from '@tanstack/react-router'
 // // rachel & himasha
 // export const Route = createFileRoute('/events/$eventId/notifications')({
@@ -11,35 +8,28 @@ import { createFileRoute } from '@tanstack/react-router';
 //   return <div>Hello "/events/$eventId/notifications"!</div>
 // }
 
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, useMatch } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
 
 const heroImageUrl =
   'https://www.eng.mcmaster.ca/wp-content/uploads/2021/05/JHE-Exterior-scaled.jpg'
->>>>>>> cb8d56a07570b878ea5b67ea185ab4c7e0801986
 
 // The route path is automatically derived from the file structure
 // Use the parent path ($eventId) to correctly inherit the parameters.
 export const Route = createFileRoute('/events/$eventId/notifications')({
   // component: YourNotificationComponent, 
-  component: NotificationSenderPage, 
+  component: RouteComponent, 
 });
 
-<<<<<<< HEAD
-function NotificationSenderPage() {
-  // Use the route context to correctly access the eventId parameter
-  const { eventId } = Route.useParams(); 
-
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Send Notifications for Event {eventId}</h1>
-      <p>This is where the interface for composing and sending notifications will be built.</p>
-      {/* ... rest of the form/logic here */}
-    </div>
-  );
-=======
 // rachel & himasha
 function RouteComponent() {
+  const match = Route.useMatch()
+
+  const [eventName, setEventName] = useState('Event')
+  const [isEventLoading, setIsEventLoading] = useState(true)
+  const [eventError, setEventError] = useState<string | null>(null)
+
+  const eventIdParam = match?.params.eventId
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [recipientsInput, setRecipientsInput] = useState('')
   const [message, setMessage] = useState('')
@@ -48,6 +38,41 @@ function RouteComponent() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // --- ADDED EFFECT TO FETCH EVENT NAME ---
+  useEffect(() => {
+    if (!eventIdParam) {
+      setIsEventLoading(false)
+      return
+    }
+
+    const controller = new AbortController()
+
+    const fetchEventName = async () => {
+      setIsEventLoading(true)
+      setEventError(null)
+      try {
+        const res = await fetch(`/api/events/${eventIdParam}`, { signal: controller.signal })
+        if (!res.ok) {
+          throw new Error(`Failed to fetch event: ${res.status}`)
+        }
+        const data = await res.json()
+        const name = data?.name ?? `Event ID ${eventIdParam}`
+        setEventName(name)
+      } catch (err: any) {
+        if (err.name === 'AbortError') return
+        console.error('Error fetching event name:', err)
+        setEventName(`Event ID ${eventIdParam}`)
+        setEventError('Could not load event name. Using ID as fallback.')
+      } finally {
+        setIsEventLoading(false)
+      }
+    }
+
+    fetchEventName()
+
+    return () => controller.abort()
+  }, [eventIdParam])
 
   const resetForm = () => {
     setRecipientsInput('')
@@ -85,7 +110,7 @@ function RouteComponent() {
         body: JSON.stringify({
           message: message.trim(),
           recipients: parsedRecipients,
-          eventId: 1, // Default to event 1 as per requirement
+          eventId: eventIdParam ? Number(eventIdParam) : 1,
         }),
       })
 
@@ -105,6 +130,31 @@ function RouteComponent() {
       setIsSubmitting(false)
     }
   }
+
+  const notifyAllAttendees = async () => {
+    const id = eventIdParam || 1
+    setError(null)
+    setStatus(null)
+    try {
+      const res = await fetch(`/api/events/${id}/attendees`)
+      if (!res.ok) throw new Error('Failed to fetch attendees')
+      const data = await res.json()
+      const emails = data.map((a: any) => a.email).filter(Boolean)
+      if (emails.length === 0) {
+        setError('No attendees found for this event.')
+        return
+      }
+      setRecipientsInput(emails.join(', '))
+      setStatus(`Prefilled ${emails.length} attendee email(s).`)
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Failed to load attendees')
+    }
+  }
+
+    const pageTitle = isEventLoading 
+    ? 'Create Event Notification' 
+    : `Create ${eventName} Notification`
 
   return (
     <div
@@ -155,7 +205,7 @@ function RouteComponent() {
                   fontWeight: 800,
                 }}
               >
-                Notifications (Admin)
+                {pageTitle}
               </h1>
               <p style={{ color: '#953363', margin: 0 }}>
                 Create and send event updates to attendees.
@@ -247,6 +297,24 @@ function RouteComponent() {
                       resize: 'vertical',
                     }}
                   />
+                  <div style={{ marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={notifyAllAttendees}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '12px',
+                        border: '1px solid #E6B8D1',
+                        backgroundColor: '#fff',
+                        color: '#7A003C',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Notify attendees
+                    </button>
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -380,5 +448,4 @@ function RouteComponent() {
       </div>
     </div>
   )
->>>>>>> cb8d56a07570b878ea5b67ea185ab4c7e0801986
 }
