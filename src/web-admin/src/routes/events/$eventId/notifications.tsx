@@ -8,7 +8,7 @@
 //   return <div>Hello "/events/$eventId/notifications"!</div>
 // }
 
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useMatch } from '@tanstack/react-router'
 import { useState } from 'react'
 
 const heroImageUrl =
@@ -20,6 +20,8 @@ export const Route = createFileRoute('/events/$eventId/notifications')({
 
 // rachel & himasha
 function RouteComponent() {
+  const match = useMatch(Route)
+  const eventIdParam = match?.params.eventId
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [recipientsInput, setRecipientsInput] = useState('')
   const [message, setMessage] = useState('')
@@ -86,6 +88,27 @@ function RouteComponent() {
     }
   }
 
+  const notifyAllAttendees = async () => {
+    const id = eventIdParam || 1
+    setError(null)
+    setStatus(null)
+    try {
+      const res = await fetch(`/api/events/${id}/attendees`)
+      if (!res.ok) throw new Error('Failed to fetch attendees')
+      const data = await res.json()
+      const emails = data.map((a: any) => a.email).filter(Boolean)
+      if (emails.length === 0) {
+        setError('No attendees found for this event.')
+        return
+      }
+      setRecipientsInput(emails.join(', '))
+      setStatus(`Prefilled ${emails.length} attendee email(s).`)
+    } catch (err) {
+      console.error(err)
+      setError(err instanceof Error ? err.message : 'Failed to load attendees')
+    }
+  }
+
   return (
     <div
       style={{
@@ -135,7 +158,7 @@ function RouteComponent() {
                   fontWeight: 800,
                 }}
               >
-                Notifications (Admin)
+                Create Event Notification
               </h1>
               <p style={{ color: '#953363', margin: 0 }}>
                 Create and send event updates to attendees.
@@ -227,6 +250,24 @@ function RouteComponent() {
                       resize: 'vertical',
                     }}
                   />
+                  <div style={{ marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={notifyAllAttendees}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '12px',
+                        border: '1px solid #E6B8D1',
+                        backgroundColor: '#fff',
+                        color: '#7A003C',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Notify attendees
+                    </button>
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
