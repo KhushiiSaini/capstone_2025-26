@@ -80,20 +80,7 @@ function EventDetailPage() {
 
       {/* Main Content */}
       <section className="flex-1 w-full p-8 lg:p-12 space-y-8">
-        {/* Header */}
-        {/* <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
-          <div>
-            <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">{event.name}</h1>
-            <p className="text-[#953363]">{event.description || 'Event details and attendees.'}</p>
-          </div>
-          <button
-            onClick={() => navigate({ to: '/events' })}
-            className="bg-[#953363] hover:bg-[#AF668A] text-white rounded-xl px-4 py-2 font-semibold transition"
-          >
-            Back to Events
-          </button>
-        </div> */}
-
+    
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
           <div>
