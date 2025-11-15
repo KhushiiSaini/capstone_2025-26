@@ -2,10 +2,31 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import jwt from 'jsonwebtoken';
+import { createTeamDDatabase } from '@teamd/database';
+import { desc } from 'drizzle-orm';
 
 const fastify = Fastify({ logger: true });
 const PORT = 3114;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+// Initialize database connection
+let db: any;
+let schema: any;
+
+async function initializeDatabase() {
+  try {
+    const dbInstance = createTeamDDatabase({
+      connectionString: process.env.DATABASE_URL || 'postgresql://postgres:capstone@localhost:5432/large_event_db',
+    });
+    db = dbInstance.db;
+    schema = dbInstance.schema;
+    fastify.log.info('Database connection established');
+  } catch (err) {
+    fastify.log.warn('Database connection failed - using mock data only');
+    db = null;
+    schema = null;
+  }
+}
 
 interface AuthUser {
   email: string;
@@ -35,6 +56,7 @@ const mockUsers: { [email: string]: AuthUser } = {
   'demo@teamd.local': { email: 'demo@teamd.local', id: 3 },
   'alice.johnson@mcmaster.ca': { email: 'alice.johnson@mcmaster.ca', id: 4 },
   'bob.smith@mcmaster.ca': { email: 'bob.smith@mcmaster.ca', id: 5 },
+  'charlie.brown@mcmaster.ca': { email: 'charlie.brown@mcmaster.ca', id: 6 },
 };
 
 const profileStore: Record<string, UserProfile> = {
@@ -109,6 +131,20 @@ const profileStore: Record<string, UserProfile> = {
     studentNumber: '402000123',
     pronouns: 'He/Him',
   },
+  'charlie.brown@mcmaster.ca': {
+    firstName: 'Charlie',
+    lastName: 'Brown',
+    email: 'charlie.brown@mcmaster.ca',
+    phoneNumber: '905-111-2222',
+    dob: '2002-09-15',
+    dietaryRestrictions: 'None',
+    emergencyContact: 'Pat Brown - 905-111-3333',
+    mediaConsent: false,
+    program: 'Computer Science',
+    year: '3',
+    studentNumber: '403000111',
+    pronouns: 'He/Him',
+  },
 };
 
 function getProfile(email: string): UserProfile {
@@ -151,7 +187,7 @@ await fastify.register(cookie);
 fastify.decorateRequest('user', null);
 
 fastify.addHook('onRequest', async (request, reply) => {
-  const protectedRoutes = ['/api/auth/me', '/api/auth/token'];
+  const protectedRoutes = ['/api/auth/me', '/api/auth/token', '/api/inbox'];
   const requiresAuth =
     protectedRoutes.includes(request.url) || request.url.startsWith('/api/profile');
 
@@ -253,11 +289,65 @@ fastify.put('/api/profile', async (request, reply) => {
   reply.send(profileStore[user.email]);
 });
 
+// Get notifications from database (if available) or return empty array
+fastify.get('/api/inbox', async (request, reply) => {
+  const user = (request as any).user as AuthUser | undefined;
+  if (!user) {
+    return reply.code(401).send({ error: 'Unauthorized' });
+  }
+
+  // Try to fetch from real database first
+  if (db && schema) {
+    try {
+      const notifications = await db
+        .select()
+        .from(schema.notifications)
+        .orderBy(desc(schema.notifications.createdAt))
+        .limit(50);
+      
+      // Filter notifications to only show ones where the user's email is in recipients
+      const filteredNotifications = notifications.filter((notif: any) => {
+        if (!notif.recipients) return false;
+        
+        // Parse recipients JSON if it's a string
+        let recipientList: string[] = [];
+        if (typeof notif.recipients === 'string') {
+          try {
+            recipientList = JSON.parse(notif.recipients);
+          } catch {
+            recipientList = [];
+          }
+        } else if (Array.isArray(notif.recipients)) {
+          recipientList = notif.recipients;
+        }
+        
+        // Check if user's email is in the recipients list
+        return recipientList.includes(user.email);
+      });
+      
+      return reply.send(filteredNotifications);
+    } catch (err) {
+      fastify.log.error({ err }, 'Failed to fetch notifications from database');
+      // Fall back to empty array if database query fails
+      return reply.send([]);
+    }
+  }
+
+  // If no database connection, return empty array
+  reply.send([]);
+});
+
 // Start server
-try {
-  await fastify.listen({ port: PORT, host: '0.0.0.0' });
-  console.log(`Team D User server running on http://localhost:${PORT}`);
-} catch (err) {
-  fastify.log.error(err);
-  process.exit(1);
+async function start() {
+  await initializeDatabase();
+  
+  try {
+    await fastify.listen({ port: PORT, host: '0.0.0.0' });
+    console.log(`Team D User server running on http://localhost:${PORT}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
 }
+
+start();
