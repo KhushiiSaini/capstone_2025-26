@@ -55,7 +55,7 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ color: '#7A003C', marginBottom: '6px', fontSize: '1.6rem' }}>Local Login</h2>
+        <h2 style={{ color: '#7A003C', marginBottom: '6px', fontSize: '1.6rem' }}>Admin Login</h2>
         <p style={{ color: '#953363', margin: 0 }}>Sign in quickly without portal credentials.</p>
       </div>
 
@@ -63,7 +63,7 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
         <div style={{ marginBottom: '15px' }}>
           <input
             type="email"
-            placeholder="Enter your TeamD email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
@@ -128,14 +128,14 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
             fontWeight: 'bold',
           }}
         >
-          Quick Login (Development):
+          Quick Login Credentials:
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
           {[
-            'teamd@local.dev',
-            'dev@teamd.local',
-            'test@teamd.dev',
-            'admin@teamd.local',
+            // 'teamd@local.dev',
+            // 'dev@teamd.local',
+            // 'test@teamd.dev',
+            // 'admin@teamd.local',
             'alice.johnson@mcmaster.ca'
           ].map(userEmail => (
             <button

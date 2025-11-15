@@ -1,12 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import QRModal from "@/components/QRModal";
+import { LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/my-events")({
   component: MyEventsPage,
 });
 
 function MyEventsPage() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [events, setEvents] = useState<any[]>([]);
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [qrValue, setQrValue] = useState("");
@@ -33,34 +37,59 @@ function MyEventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
-      {/* Header */}
-      <header className="bg-maroon-800 text-white p-6 shadow-md">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-              <span className="text-maroon-800 font-bold text-lg">MES</span>
+      {/* ---------------- Taskbar / Header ---------------- */}
+      <header className="bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
+              MES
             </div>
             <div>
-              <h1 className="text-xl font-bold">Team D Events</h1>
-              <p className="text-sm opacity-90">User Experience Hub</p>
+              <h1 className="font-bold text-xl leading-none">MES Events Platform</h1>
             </div>
           </div>
 
-          <Link
-            to="/events"
-            className="bg-white text-maroon-800 hover:bg-gray-100 text-sm py-1.5 px-5 rounded-full font-semibold transition"
-          >
-            Events
-          </Link>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigate({ to: "/events" })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Events
+            </button>
+            {/* <button
+              onClick={() => navigate({ to: "/my-events" })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              My Events
+            </button> */}
+            <button
+              onClick={() => navigate({ to: "/profile" })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Profile
+            </button>
+            <button
+              onClick={() => navigate({ to: "/inbox" })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Notifications
+            </button>
+
+            <button
+              onClick={logout}
+              className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Main */}
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto p-8">
         <div className="bg-white rounded-3xl shadow-md p-10 border border-purple-100">
-          <h2 className="text-4xl font-bold text-maroon-800 mb-10">
-            My Events
-          </h2>
+          <h2 className="text-4xl font-bold text-maroon-800 mb-10">My Events</h2>
 
           {events.length === 0 ? (
             <p className="text-gray-600">No events registered yet.</p>
@@ -91,15 +120,11 @@ function MyEventsPage() {
 
                   {/* Event Info */}
                   <div className="flex-1">
-                    <h3 className="text-2xl font-semibold text-maroon-800 mb-2">
-                      {event.eventName}
-                    </h3>
+                    <h3 className="text-2xl font-semibold text-maroon-800 mb-2">{event.eventName}</h3>
                     <p className="text-pink-800 text-sm mb-1">
                       {new Date(event.eventDate).toDateString()}
                     </p>
-                    <p className="text-pink-800 text-sm mb-2">
-                      {event.eventLocation}
-                    </p>
+                    <p className="text-pink-800 text-sm mb-2">{event.eventLocation}</p>
                   </div>
 
                   {/* QR Button */}
@@ -119,12 +144,7 @@ function MyEventsPage() {
       </main>
 
       {/* QR Modal */}
-      <QRModal
-        open={qrModalOpen}
-        onOpenChange={setQrModalOpen}
-        qrValue={qrValue}
-        isNewRegistration={false}
-      />
+      <QRModal open={qrModalOpen} onOpenChange={setQrModalOpen} qrValue={qrValue} isNewRegistration={false} />
     </div>
   );
 }

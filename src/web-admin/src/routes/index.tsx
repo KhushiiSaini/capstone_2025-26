@@ -69,11 +69,19 @@ function TeamDDashboard() {
       {/* Main Content */}
       <section className="flex-1 p-8 lg:p-12">
         <div className="text-center lg:text-left mb-12">
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-[#7A003C] mb-2">
+          {/* <h1 className="text-4xl lg:text-5xl font-extrabold text-[#7A003C] mb-2">
             Hi {user?.email}
-          </h1>
+          </h1> */}
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-[#7A003C] mb-2">
+  Welcome, {user?.email
+    ?.split("@")[0]             // get the part before @
+    .split(".")                 // split by dot
+    .map(name => name.charAt(0).toUpperCase() + name.slice(1)) // capitalize each part
+    .join(" ")}                 
+</h1>
+
           <p className="text-[#953363] text-lg">
-            Welcome back to your admin dashboard
+  Access your admin dashboard to manage event registrations, handle check-ins, and send notifications.
           </p>
         </div>
 

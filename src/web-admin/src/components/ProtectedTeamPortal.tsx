@@ -63,7 +63,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                 Welcome to <br /> McMaster Engineering Society
               </h1>
               <p style={{ marginTop: '16px', maxWidth: '480px', fontSize: '1rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)' }}>
-                Sign in to manage registrations, communicate with attendees, and prepare for upcoming MES experiences.
+                {/* Sign in to manage registrations, communicate with attendees, and prepare for upcoming MES experiences. */}
               </p>
             </div>
           </div>
@@ -129,7 +129,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                   </button>
                 </div>
 
-                <div
+                {/* <div
                   style={{
                     border: '1px solid #E1E7EE',
                     borderRadius: '20px',
@@ -160,7 +160,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                   <p style={{ color: '#6C7B8A', fontSize: '0.85rem', marginTop: '8px' }}>
                     After signing in, choose “Team D Portal” to continue.
                   </p>
-                </div>
+                </div> */}
               </div>
             )}
           </div>
@@ -239,60 +239,94 @@ export default function ProtectedTeamPortal({ children }: ProtectedTeamPortalPro
   if (!user) {
     return <UnauthorizedAccess onLocalLogin={handleLocalLogin} />;
   }
-
-  return (
-    <div>
-      {/* Auth info header */}
-      <div style={{
-        position: 'fixed',      // sticks to the top
-        top: 0,
-        left: 0,
-        width: '100vw',         // full viewport width
-        backgroundColor: '#d4edda',
-        borderBottom: '1px solid #c3e6cb',
-        padding: '10px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        boxSizing: 'border-box',
-        zIndex: 1000    
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <span style={{ color: '#155724', fontSize: '0.9rem' }}>
-            ✅ Authenticated as: <strong>{user.email}</strong>
-          </span>
-          <span style={{
-            color: '#0c5460',
-            fontSize: '0.8rem',
-            backgroundColor: '#d1ecf1',
-            padding: '2px 8px',
-            borderRadius: '3px',
-            border: '1px solid #bee5eb'
-          }}>
-            {sessionStorage.getItem('teamd-auth-source') === 'local' ? '🚀 Local Dev' : '🌐 Main Portal'}
-          </span>
+return (
+  <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+    {/* ---------------- Header ---------------- */}
+    <header className="fixed top-0 left-0 w-full bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        {/* Left: Logo + Title */}
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
+            MES
+          </div>
+          <h1 className="font-bold text-xl leading-none">MES Events Platform</h1>
         </div>
-        {sessionStorage.getItem('teamd-auth-source') === 'local' && (
+
+        {/* Right: Logout button */}
+        <div>
           <button
             onClick={() => {
               clearStoredAuth();
               window.location.reload();
             }}
-            style={{
-              backgroundColor: '#dc3545',
-              color: 'white',
-              border: 'none',
-              padding: '5px 10px',
-              borderRadius: '4px',
-              fontSize: '0.8rem',
-              cursor: 'pointer'
-            }}
+            className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
           >
             Logout
           </button>
-        )}
+        </div>
       </div>
+    </header>
+
+    {/* Main content */}
+    <main className="max-w-7xl mx-auto py-6">
       {children}
-    </div>
-  );
+    </main>
+  </div>
+);
+
+  // return (
+  //   <div>
+  //     {/* Auth info header */}
+  //     <div style={{
+  //       position: 'fixed',      // sticks to the top
+  //       top: 0,
+  //       left: 0,
+  //       width: '100vw',         // full viewport width
+  //       backgroundColor: '#d4edda',
+  //       borderBottom: '1px solid #c3e6cb',
+  //       padding: '10px 20px',
+  //       display: 'flex',
+  //       justifyContent: 'space-between',
+  //       alignItems: 'center',
+  //       boxSizing: 'border-box',
+  //       zIndex: 1000    
+  //     }}>
+  //       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+  //         <span style={{ color: '#155724', fontSize: '0.9rem' }}>
+  //           ✅ Authenticated as: <strong>{user.email}</strong>
+  //         </span>
+  //         <span style={{
+  //           color: '#0c5460',
+  //           fontSize: '0.8rem',
+  //           backgroundColor: '#d1ecf1',
+  //           padding: '2px 8px',
+  //           borderRadius: '3px',
+  //           border: '1px solid #bee5eb'
+  //         }}>
+  //           {sessionStorage.getItem('teamd-auth-source') === 'local' ? '🚀 Local Dev' : '🌐 Main Portal'}
+  //         </span>
+  //       </div>
+  //       {sessionStorage.getItem('teamd-auth-source') === 'local' && (
+  //         <button
+  //           onClick={() => {
+  //             clearStoredAuth();
+  //             window.location.reload();
+  //           }}
+  //           style={{
+  //             backgroundColor: '#dc3545',
+  //             color: 'white',
+  //             border: 'none',
+  //             padding: '5px 10px',
+  //             borderRadius: '4px',
+  //             fontSize: '0.8rem',
+  //             cursor: 'pointer'
+  //           }}
+  //         >
+  //           Logout
+  //         </button>
+  //       )}
+  //     </div>
+  //     {children}
+  //   </div>
+  // );
 }

@@ -10,6 +10,9 @@ const quickLoginEmails = [
   'admin@teamd.local',
   'alice.johnson@mcmaster.ca',
   'bob.smith@mcmaster.ca',
+      'charlie.brown@mcmaster.ca',
+
+
 ];
 
 function LoginPageContent() {

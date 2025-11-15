@@ -1,3 +1,6 @@
+
+
+
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../contexts/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -20,13 +23,13 @@ const serviceCards: ServiceCard[] = [
   },
   {
     title: 'Your Events',
-    description: 'Access and manage your assigned or registered events.',
+    description: 'Access and manage your registered events.',
     icon: Calendar,
     route: '/events',
   },
   {
     title: 'Notifications',
-    description: 'View your alerts, reminders, and important team updates.',
+    description: 'View your alerts and important updates on MES events.',
     icon: Bell,
     route: '/inbox',
   },
@@ -46,15 +49,17 @@ const ServiceCardItem = ({ card, onClick }: { card: ServiceCard; onClick: () => 
 function UserDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isLocalAuth, setIsLocalAuth] = useState(false);
 
-  useEffect(() => {
-    const authSource = sessionStorage.getItem('teamd-auth-source');
-    setIsLocalAuth(authSource === 'local');
-  }, [user]);
+  // Format the user's name from email
+  const userName = user?.email
+    ?.split('@')[0]
+    .split('.')
+    .map(word => word[0].toUpperCase() + word.slice(1))
+    .join(' ') || 'User';
 
   return (
     <main className="min-h-screen flex flex-col bg-[#F8F4F7] text-[#2D142C]">
+      {/* Header / Taskbar */}
       <header className="bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
@@ -62,34 +67,56 @@ function UserDashboard() {
               MES
             </div>
             <div>
-              <h1 className="font-bold text-xl leading-none">Team D Events</h1>
-              <p className="text-sm opacity-80">User Experience Hub</p>
+              <h1 className="font-bold text-xl leading-none">MES Events Platform</h1>
+              {/* <p className="text-sm opacity-80">User Experience Hub</p> */}
             </div>
           </div>
 
+          {/* Navigation Buttons */}
           <div className="flex items-center space-x-3">
-            <span className="text-sm hidden sm:inline">Hi, {user?.email}</span>
-            {isLocalAuth && (
-              <button
-                onClick={logout}
-                className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
-            )}
+            {/* <span className="text-sm hidden sm:inline">Hi, {userName}</span> */}
+
+            <button
+              onClick={() => navigate({ to: '/events' })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Events
+            </button>
+            <button
+              onClick={() => navigate({ to: '/profile' })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Profile
+            </button>
+            <button
+              onClick={() => navigate({ to: '/inbox' })}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              Notifications
+            </button>
+
+            {/* Logout Button */}
+            <button
+              onClick={logout}
+              className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
         </div>
       </header>
 
+      {/* Main Content */}
       <section className="flex-1 max-w-6xl mx-auto px-6 py-12 space-y-10">
         <div className="bg-white border border-[#F3D3DF] rounded-3xl shadow-md p-6">
-          <h2 className="text-3xl font-extrabold text-[#7A003C] mb-2">Welcome, {user?.email}</h2>
+          <h2 className="text-3xl font-extrabold text-[#7A003C] mb-2">Welcome, {userName}</h2>
           <p className="text-[#953363]">
             Access your personal dashboard, stay informed on upcoming MES events, and manage your participation.
           </p>
         </div>
 
+        {/* Service Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {serviceCards.map((card) => (
             <ServiceCardItem
@@ -101,8 +128,9 @@ function UserDashboard() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="bg-[#F3D3DF] text-[#7A003C] text-center py-6 text-sm">
-        © 2025 MES Team D. Large event support and coordination.
+        © 2025 MES Events Platform. Large event support and coordination.
       </footer>
     </main>
   );

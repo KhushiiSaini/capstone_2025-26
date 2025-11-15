@@ -187,12 +187,12 @@ useEffect(() => {
       Manage your upcoming events, track attendees, and more.
     </p>
   </div>
-  <button
+  {/* <button
     onClick={() => navigate({ to: '/events/new' })}
     className="bg-[#953363] hover:bg-[#AF668A] text-white rounded-xl px-4 py-2 font-semibold transition"
   >
     + New Event
-  </button>
+  </button> */}
 </div>
 
 

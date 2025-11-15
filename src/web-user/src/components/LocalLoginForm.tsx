@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { AuthUser } from '../lib/auth';
 
 const quickLoginEmails = [
-  'teamd@local.dev',
-  'dev@teamd.local',
-  'test@teamd.dev',
-  'admin@teamd.local',
-  'alice.johnson@mcmaster.ca',
-  'bob.smith@mcmaster.ca',
+  // 'teamd@local.dev',
+  // 'dev@teamd.local',
+  // 'test@teamd.dev',
+  // 'admin@teamd.local',
+  // 'alice.johnson@mcmaster.ca',
+    'charlie.brown@mcmaster.ca',
+
+  'bob.smith@mcmaster.ca'
+  
 ];
 
 interface LocalLoginFormProps {
@@ -42,11 +45,37 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
       if (response.ok) {
         const data = await response.json();
         if (data.user && data.token) {
-          sessionStorage.setItem('teamd-auth-user', JSON.stringify(data.user));
-          sessionStorage.setItem('teamd-auth-token', data.token);
-          sessionStorage.setItem('teamd-auth-source', 'local');
-          onLoginSuccess(data.user, data.token);
-        } else {
+            const derivedName =
+    data.user.name ||
+    data.user.email
+      .split('@')[0]
+      .split('.')
+      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .join(' ');
+
+  const userWithName = { ...data.user, name: derivedName };
+
+  // store the user with the name included
+  sessionStorage.setItem('teamd-auth-user', JSON.stringify(userWithName));
+  sessionStorage.setItem('teamd-auth-token', data.token);
+  sessionStorage.setItem('teamd-auth-source', 'local');
+
+  onLoginSuccess(userWithName, data.token);
+  //         const derivedName = data.user.name || 
+  //                     data.user.email.split('@')[0]
+  //                                    .split('.')
+  //                                    .map(word => word[0].toUpperCase() + word.slice(1))
+  //                                    .join(' ');
+
+  // const userWithName = { ...data.user, name: derivedName };
+
+  //         sessionStorage.setItem('teamd-auth-user', JSON.stringify(data.user));
+  //         sessionStorage.setItem('teamd-auth-token', data.token);
+  //         sessionStorage.setItem('teamd-auth-source', 'local');
+  // onLoginSuccess(userWithName, data.token);
+        } 
+        
+        else {
           setError('Invalid response from server.');
         }
       } else {
@@ -63,7 +92,7 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div style={{ textAlign: 'center' }}>
-        <h2 style={{ color: '#7A003C', marginBottom: '6px', fontSize: '1.6rem' }}>Local Login</h2>
+        <h2 style={{ color: '#7A003C', marginBottom: '6px', fontSize: '1.6rem' }}>User Login</h2>
         <p style={{ color: '#953363', margin: 0 }}>Sign in quickly without portal credentials.</p>
       </div>
 
@@ -72,7 +101,7 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your Team D email"
+          placeholder="Enter your email"
           style={{
             width: '100%',
             padding: '14px',
@@ -136,7 +165,7 @@ export default function LocalLoginForm({ onLoginSuccess }: LocalLoginFormProps) 
             fontWeight: 'bold',
           }}
         >
-          Quick Login (Development):
+          Quick Login Credentials:
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           {quickLoginEmails.map((userEmail) => (
