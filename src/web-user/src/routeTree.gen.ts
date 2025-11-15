@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as MyEventsRouteImport } from './routes/my-events'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as EventsRouteImport } from './routes/events'
@@ -24,6 +25,11 @@ const UsersRoute = UsersRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyEventsRoute = MyEventsRouteImport.update({
+  id: '/my-events',
+  path: '/my-events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
@@ -69,15 +77,38 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/inbox': typeof InboxRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/profile': typeof ProfileRoute
   '/users': typeof UsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
+  fullPaths:
+    | '/'
+    | '/events'
+    | '/inbox'
+    | '/login'
+    | '/my-events'
+    | '/profile'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
-  id: '__root__' | '/' | '/events' | '/inbox' | '/login' | '/profile' | '/users'
+  to:
+    | '/'
+    | '/events'
+    | '/inbox'
+    | '/login'
+    | '/my-events'
+    | '/profile'
+    | '/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/events'
+    | '/inbox'
+    | '/login'
+    | '/my-events'
+    | '/profile'
+    | '/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -85,6 +116,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   InboxRoute: typeof InboxRoute
   LoginRoute: typeof LoginRoute
+  MyEventsRoute: typeof MyEventsRoute
   ProfileRoute: typeof ProfileRoute
   UsersRoute: typeof UsersRoute
 }
@@ -103,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-events': {
+      id: '/my-events'
+      path: '/my-events'
+      fullPath: '/my-events'
+      preLoaderRoute: typeof MyEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -141,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   InboxRoute: InboxRoute,
   LoginRoute: LoginRoute,
+  MyEventsRoute: MyEventsRoute,
   ProfileRoute: ProfileRoute,
   UsersRoute: UsersRoute,
 }
