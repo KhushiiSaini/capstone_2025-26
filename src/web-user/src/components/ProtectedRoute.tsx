@@ -64,7 +64,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                 Welcome to the McMaster Engineering Society
               </h1>
               <p style={{ marginTop: '16px', maxWidth: '480px', fontSize: '1rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)' }}>
-                Sign in to manage invitations, track events, and stay connected with Team D.
+                {/* Sign in to manage invitations, track events, and stay connected with MES. */}
               </p>
             </div>
           </div>
@@ -129,7 +129,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                     Use Local Login
                   </button>
                 </div>
-
+{/* 
                 <div
                   style={{
                     border: '1px solid #E1E7EE',
@@ -161,7 +161,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                   <p style={{ color: '#6C7B8A', fontSize: '0.85rem', marginTop: '8px' }}>
                     After signing in, choose “Team D Portal” to continue.
                   </p>
-                </div>
+                </div> */}
               </div>
             )}
           </div>

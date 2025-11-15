@@ -35,6 +35,8 @@ const mockUsers: { [email: string]: AuthUser } = {
   "demo@teamd.local": { email: "demo@teamd.local", id: 3 },
   "alice.johnson@mcmaster.ca": { email: "alice.johnson@mcmaster.ca", id: 4 },
   "bob.smith@mcmaster.ca": { email: "bob.smith@mcmaster.ca", id: 5 },
+      'charlie.brown@mcmaster.ca': { email: 'charlie.brown@mcmaster.ca', id: 6}
+
 };
 
 const profileStore: Record<string, UserProfile> = {
@@ -109,6 +111,21 @@ const profileStore: Record<string, UserProfile> = {
     studentNumber: "402000123",
     pronouns: "He/Him",
   },
+  "charlie.brown@mcmaster.ca": {
+    firstName: "Charlie",
+    lastName: "Brown",
+    email: "charlie.brown@mcmaster.ca",
+    phoneNumber: "905-555-0102",
+    dob: "2001-11-05",
+    dietaryRestrictions: "Gluten-Free",
+    emergencyContact: "Sister: 905-555-3333",
+    mediaConsent: true,
+    program: "Mathematics",
+    year: "4",
+    studentNumber: "S3456789",
+    pronouns: "They/Them",
+  },
+
 };
 
 function getProfile(email: string): UserProfile {
