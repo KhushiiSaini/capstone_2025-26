@@ -11,10 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as CheckInRouteImport } from './routes/check-in'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventsIndexRouteImport } from './routes/events/index'
+import { Route as AnalyticsIndexRouteImport } from './routes/analytics/index'
+import { Route as AnalyticsEventIdRouteImport } from './routes/analytics/$eventId'
+import { Route as EventsEventIdIndexRouteImport } from './routes/events/$eventId/index'
+import { Route as EventsEventIdNotificationsRouteImport } from './routes/events/$eventId/notifications'
+import { Route as EventsEventIdCheckInRouteImport } from './routes/events/$eventId/check-in'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -26,86 +29,123 @@ const NotificationsRoute = NotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckInRoute = CheckInRouteImport.update({
-  id: '/check-in',
-  path: '/check-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsEventIdRoute = AnalyticsEventIdRouteImport.update({
+  id: '/analytics/$eventId',
+  path: '/analytics/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsEventIdIndexRoute = EventsEventIdIndexRouteImport.update({
+  id: '/events/$eventId/',
+  path: '/events/$eventId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsEventIdNotificationsRoute =
+  EventsEventIdNotificationsRouteImport.update({
+    id: '/events/$eventId/notifications',
+    path: '/events/$eventId/notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EventsEventIdCheckInRoute = EventsEventIdCheckInRouteImport.update({
+  id: '/events/$eventId/check-in',
+  path: '/events/$eventId/check-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/check-in': typeof CheckInRoute
-  '/events': typeof EventsRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/analytics/$eventId': typeof AnalyticsEventIdRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/events': typeof EventsIndexRoute
+  '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
+  '/events/$eventId/notifications': typeof EventsEventIdNotificationsRoute
+  '/events/$eventId': typeof EventsEventIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/check-in': typeof CheckInRoute
-  '/events': typeof EventsRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/analytics/$eventId': typeof AnalyticsEventIdRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/events': typeof EventsIndexRoute
+  '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
+  '/events/$eventId/notifications': typeof EventsEventIdNotificationsRoute
+  '/events/$eventId': typeof EventsEventIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/analytics': typeof AnalyticsRoute
-  '/check-in': typeof CheckInRoute
-  '/events': typeof EventsRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/analytics/$eventId': typeof AnalyticsEventIdRoute
+  '/analytics/': typeof AnalyticsIndexRoute
+  '/events/': typeof EventsIndexRoute
+  '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
+  '/events/$eventId/notifications': typeof EventsEventIdNotificationsRoute
+  '/events/$eventId/': typeof EventsEventIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/analytics'
-    | '/check-in'
-    | '/events'
     | '/notifications'
     | '/profile'
+    | '/analytics/$eventId'
+    | '/analytics'
+    | '/events'
+    | '/events/$eventId/check-in'
+    | '/events/$eventId/notifications'
+    | '/events/$eventId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/analytics'
-    | '/check-in'
-    | '/events'
     | '/notifications'
     | '/profile'
+    | '/analytics/$eventId'
+    | '/analytics'
+    | '/events'
+    | '/events/$eventId/check-in'
+    | '/events/$eventId/notifications'
+    | '/events/$eventId'
   id:
     | '__root__'
     | '/'
-    | '/analytics'
-    | '/check-in'
-    | '/events'
     | '/notifications'
     | '/profile'
+    | '/analytics/$eventId'
+    | '/analytics/'
+    | '/events/'
+    | '/events/$eventId/check-in'
+    | '/events/$eventId/notifications'
+    | '/events/$eventId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AnalyticsRoute: typeof AnalyticsRoute
-  CheckInRoute: typeof CheckInRoute
-  EventsRoute: typeof EventsRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
+  AnalyticsEventIdRoute: typeof AnalyticsEventIdRoute
+  AnalyticsIndexRoute: typeof AnalyticsIndexRoute
+  EventsIndexRoute: typeof EventsIndexRoute
+  EventsEventIdCheckInRoute: typeof EventsEventIdCheckInRoute
+  EventsEventIdNotificationsRoute: typeof EventsEventIdNotificationsRoute
+  EventsEventIdIndexRoute: typeof EventsEventIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -124,27 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/check-in': {
-      id: '/check-in'
-      path: '/check-in'
-      fullPath: '/check-in'
-      preLoaderRoute: typeof CheckInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analytics': {
-      id: '/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -152,16 +171,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics/': {
+      id: '/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics/$eventId': {
+      id: '/analytics/$eventId'
+      path: '/analytics/$eventId'
+      fullPath: '/analytics/$eventId'
+      preLoaderRoute: typeof AnalyticsEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId/': {
+      id: '/events/$eventId/'
+      path: '/events/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof EventsEventIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId/notifications': {
+      id: '/events/$eventId/notifications'
+      path: '/events/$eventId/notifications'
+      fullPath: '/events/$eventId/notifications'
+      preLoaderRoute: typeof EventsEventIdNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId/check-in': {
+      id: '/events/$eventId/check-in'
+      path: '/events/$eventId/check-in'
+      fullPath: '/events/$eventId/check-in'
+      preLoaderRoute: typeof EventsEventIdCheckInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AnalyticsRoute: AnalyticsRoute,
-  CheckInRoute: CheckInRoute,
-  EventsRoute: EventsRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
+  AnalyticsEventIdRoute: AnalyticsEventIdRoute,
+  AnalyticsIndexRoute: AnalyticsIndexRoute,
+  EventsIndexRoute: EventsIndexRoute,
+  EventsEventIdCheckInRoute: EventsEventIdCheckInRoute,
+  EventsEventIdNotificationsRoute: EventsEventIdNotificationsRoute,
+  EventsEventIdIndexRoute: EventsEventIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

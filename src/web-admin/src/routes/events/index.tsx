@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { Calendar, Users, Send, QrCode, User, ChartBar } from 'lucide-react';
-import ProtectedTeamPortal from '../components/ProtectedTeamPortal';
-import { getCurrentUser, AuthUser } from '../lib/auth';
+import ProtectedTeamPortal from '../../components/ProtectedTeamPortal';
+import { getCurrentUser, AuthUser } from '../../lib/auth';
 
 // Mock data
 const mockEvents = Array.from({ length: 10 }, (_, i) => ({
@@ -337,7 +337,8 @@ function ProtectedEventManager() {
   );
 }
 
-export const Route = createFileRoute('/events')({
+export const Route = createFileRoute('/events/')({
   component: ProtectedEventManager,
+  
 
 });

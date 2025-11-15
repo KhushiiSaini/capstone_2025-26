@@ -33,6 +33,7 @@ export const events = pgTable("events", {
 // ------------------- ATTENDEES (USER-EVENT CONNECTION) -------------------
 export const attendees = pgTable("attendees", {
   id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
   userId: integer("user_id").notNull().references(() => users.id),
   eventId: integer("event_id").notNull().references(() => events.id),
 
