@@ -8,29 +8,40 @@
 //   return <div>Hello "/events/$eventId/notifications"!</div>
 // }
 
-import { createFileRoute, useMatch } from '@tanstack/react-router'
+import { createFileRoute, useMatch, useNavigate, useRouterState } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import { Calendar, Users, Send, QrCode, User, ChartBar } from 'lucide-react'
+import ProtectedTeamPortal from '../../../components/ProtectedTeamPortal';
 
 const heroImageUrl =
   'https://www.eng.mcmaster.ca/wp-content/uploads/2021/05/JHE-Exterior-scaled.jpg'
+
+// Sidebar links used by the Admin Dashboard layout in multiple admin pages
+const sidebarLinks = [
+  { title: 'Event Manager', icon: Calendar, path: '/events' },
+  { title: 'User Profile', icon: User, path: '/profile' },
+  { title: 'Analytics', icon: ChartBar, path: '/analytics' },
+]
 
 // The route path is automatically derived from the file structure
 // Use the parent path ($eventId) to correctly inherit the parameters.
 export const Route = createFileRoute('/events/$eventId/notifications')({
   // component: YourNotificationComponent, 
-  component: RouteComponent, 
+  component: ProtectedCheckIn, 
 });
 
 // rachel & himasha
 function RouteComponent() {
   const match = Route.useMatch()
+  const navigate = useNavigate()
+  const activePath = useRouterState({ select: (state) => state.location.pathname })
 
   const [eventName, setEventName] = useState('Event')
   const [isEventLoading, setIsEventLoading] = useState(true)
   const [eventError, setEventError] = useState<string | null>(null)
 
   const eventIdParam = match?.params.eventId
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(true)
   const [recipientsInput, setRecipientsInput] = useState('')
   const [message, setMessage] = useState('')
   const [audience, setAudience] = useState('all')
@@ -157,16 +168,47 @@ function RouteComponent() {
     : `Create ${eventName} Notification`
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f7ecf5 0%, #fdf7fb 40%, #ffffff 70%)',
-        padding: '40px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+        <main className="min-h-screen flex bg-white">
+      {/* Sidebar */}
+      <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
+        <div className="text-center lg:text-left">
+          <h2 className="text-3xl font-extrabold text-white flex items-center space-x-2">
+            <span>Admin Dashboard</span>
+            <span className="w-6 h-6 bg-gradient-to-tr from-[#953363] to-[#AF668A] rounded-full flex-shrink-0"></span>
+          </h2>
+          <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full"></div>
+        </div>
+
+        <div className="flex flex-col space-y-4">
+          {sidebarLinks.map((link) => (
+            <button
+              key={link.title}
+              onClick={() => navigate({ to: link.path })}
+              className={`flex items-center p-4 rounded-xl transition-all shadow-md ${
+                activePath === link.path ? 'bg-[#AF668A] text-white' : 'bg-[#953363] text-white hover:bg-[#AF668A]'
+              }`}
+            >
+              <link.icon className="w-6 h-6 mr-3" />
+              <span className="font-medium">{link.title}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      {/* Main Content */}
+  <section className="flex-1 w-full p-8 lg:p-12">
+    {/* Header */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-10 gap-4 bg-[#F9E9F0] rounded-2xl p-6">
+        <div>
+    <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">
+      Notify Attendee(s): {eventName}
+    </h1>
+    <p className="text-[#953363]">
+      Create and send event updates to attendees.
+    </p>
+  </div>
+</div>
+    
       <div
         style={{
           width: '100%',
@@ -174,7 +216,8 @@ function RouteComponent() {
           borderRadius: '32px',
           overflow: 'hidden',
           boxShadow: '0 35px 80px rgba(122,0,60,0.25)',
-          backgroundColor: '#fff',
+          backgroundColor: 'rgb(122 0 60 / 14%)',
+          border: '1px solid #CA99B1',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column-reverse', gap: '32px' }}>
@@ -183,7 +226,9 @@ function RouteComponent() {
             style={{
               flex: '1 1 50%',
               padding: '48px',
-              background: 'linear-gradient(135deg, #ffffff 0%, #fff8fb 70%)',
+              marginTop: '-20px',
+              backgroundColor: 'rgb(249 233 240 / var(--tw-bg-opacity, 1))',
+              // background: 'linear-gradient(135deg, #ffffff 0%, #fff8fb 70%)',
               minHeight: '400px',
             }}
           >
@@ -195,7 +240,6 @@ function RouteComponent() {
                   color: '#AF668A',
                 }}
               >
-                Team D
               </p>
               <h1
                 style={{
@@ -205,11 +249,8 @@ function RouteComponent() {
                   fontWeight: 800,
                 }}
               >
-                {pageTitle}
+                
               </h1>
-              <p style={{ color: '#953363', margin: 0 }}>
-                Create and send event updates to attendees.
-              </p>
             </div>
 
             {/* New notification button */}
@@ -312,7 +353,7 @@ function RouteComponent() {
                         cursor: 'pointer',
                       }}
                     >
-                      Notify attendees
+                      Load attendees
                     </button>
                   </div>
                 </div>
@@ -396,56 +437,18 @@ function RouteComponent() {
             )}
           </section>
 
-          {/* Right: hero/info panel */}
-          <section
-            style={{
-              position: 'relative',
-              flex: '1 1 50%',
-              minHeight: '320px',
-              backgroundImage: `linear-gradient(135deg, rgba(98,0,48,0.8), rgba(149,51,99,0.7)), url(${heroImageUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ padding: '48px', color: '#fff' }}>
-              <p
-                style={{
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.3em',
-                  fontSize: '0.8rem',
-                  marginBottom: '12px',
-                }}
-              >
-                MES Event Portal
-              </p>
-              <h2
-                style={{
-                  fontSize: '2.4rem',
-                  lineHeight: 1.2,
-                  margin: 0,
-                  fontWeight: 800,
-                }}
-              >
-                Keep attendees informed in real time
-              </h2>
-              <p
-                style={{
-                  marginTop: '18px',
-                  maxWidth: '480px',
-                  fontSize: '1rem',
-                  lineHeight: 1.6,
-                  color: 'rgba(255,255,255,0.9)',
-                }}
-              >
-                Use targeted, in-app notifications and email to share key updates about
-                door times, transportation, and schedule changes across large MES events.
-              </p>
-            </div>
-          </section>
+
         </div>
       </div>
-    </div>
+      </section>
+    </main>
   )
+}
+
+export default function ProtectedCheckIn() {
+  return (
+    <ProtectedTeamPortal>
+      <RouteComponent/>
+    </ProtectedTeamPortal>
+  );
 }
