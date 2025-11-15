@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { registerProfileRoutes } from './routes/profile';
 import { registerEventRoutes } from './routes/events';
 import { registerCheckInRoutes } from './routes/check-in';
+import { registerNotificationRoutes } from './routes/notifications';
 
 
 const fastify = Fastify({ logger: true });
@@ -62,6 +63,11 @@ try {
   await registerCheckInRoutes(fastify);
 } catch (error) {
   fastify.log.error({ err: error }, 'Failed to register check-in routes');
+}
+try {
+  await registerNotificationRoutes(fastify);
+} catch (error) {
+  fastify.log.error({ err: error }, 'Failed to register notification routes');
 }
 // Start server
 try {

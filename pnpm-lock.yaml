@@ -152,6 +152,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.58.3
         version: 1.132.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@teamd/database':
+        specifier: workspace:*
+        version: link:../database
       axios:
         specifier: ^1.12.2
         version: 1.12.2

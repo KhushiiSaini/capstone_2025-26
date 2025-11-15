@@ -19,6 +19,7 @@
     "@fastify/cors": "^10.0.1",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-router": "^1.58.3",
+    "@teamd/database": "workspace:*",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
