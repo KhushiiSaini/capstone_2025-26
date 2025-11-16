@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventsIndexRouteImport } from './routes/events/index'
 import { Route as EventsEventIdIndexRouteImport } from './routes/events/$eventId/index'
@@ -20,11 +19,6 @@ import { Route as EventsEventIdCheckInRouteImport } from './routes/events/$event
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -56,7 +50,6 @@ const EventsEventIdCheckInRoute = EventsEventIdCheckInRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/events': typeof EventsIndexRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -65,7 +58,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/events': typeof EventsIndexRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -75,7 +67,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/events/': typeof EventsIndexRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -86,7 +77,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/notifications'
     | '/profile'
     | '/events'
     | '/events/$eventId/check-in'
@@ -95,7 +85,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/notifications'
     | '/profile'
     | '/events'
     | '/events/$eventId/check-in'
@@ -104,7 +93,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/notifications'
     | '/profile'
     | '/events/'
     | '/events/$eventId/check-in'
@@ -114,7 +102,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
   EventsIndexRoute: typeof EventsIndexRoute
   EventsEventIdCheckInRoute: typeof EventsEventIdCheckInRoute
@@ -129,13 +116,6 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -178,7 +158,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
   EventsIndexRoute: EventsIndexRoute,
   EventsEventIdCheckInRoute: EventsEventIdCheckInRoute,

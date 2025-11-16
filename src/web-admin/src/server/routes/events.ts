@@ -45,25 +45,55 @@ export async function registerEventRoutes(fastify: FastifyInstance) {
   });
 
   // Get attendees for an event
+  // fastify.get('/api/events/:id/attendees', async (request, reply) => {
+  //   const { id } = request.params as { id: string };
+  //   const eventId = Number(id);
+
+  //   if (Number.isNaN(eventId)) {
+  //     return reply.code(400).send({ error: 'Invalid event id' });
+  //   }
+
+  //   try {
+  //     const attendees = await db
+  //       .select()
+  //       .from(schema.attendees)
+  //       .where(eq(schema.attendees.eventId, eventId));
+  //     return attendees;
+  //   } catch (error) {
+  //     fastify.log.error({ err: error }, 'Failed to fetch attendees');
+  //     return reply.code(500).send({ error: 'Failed to load attendees' });
+  //   }
+  // });
   fastify.get('/api/events/:id/attendees', async (request, reply) => {
-    const { id } = request.params as { id: string };
-    const eventId = Number(id);
+  const { id } = request.params as { id: string };
+  const eventId = Number(id);
 
-    if (Number.isNaN(eventId)) {
-      return reply.code(400).send({ error: 'Invalid event id' });
-    }
+  if (Number.isNaN(eventId)) {
+    return reply.code(400).send({ error: 'Invalid event id' });
+  }
 
-    try {
-      const attendees = await db
-        .select()
-        .from(schema.attendees)
-        .where(eq(schema.attendees.eventId, eventId));
-      return attendees;
-    } catch (error) {
-      fastify.log.error({ err: error }, 'Failed to fetch attendees');
-      return reply.code(500).send({ error: 'Failed to load attendees' });
-    }
-  });
+  try {
+    const attendees = await db
+      .select({
+        id: schema.attendees.id,
+        name: schema.attendees.name,
+        email: schema.attendees.email,
+        phoneNumber: schema.attendees.phoneNumber,
+        waiverSigned: schema.attendees.waiverSigned,
+        checkedIn: schema.attendees.checkedIn,
+        checkedInAt: schema.qrCodes.checkedInAt, // <- include check-in time
+      })
+      .from(schema.attendees)
+      .leftJoin(schema.qrCodes, eq(schema.qrCodes.attendeeId, schema.attendees.id))
+      .where(eq(schema.attendees.eventId, eventId));
+
+    return attendees;
+  } catch (error) {
+    fastify.log.error({ err: error }, 'Failed to fetch attendees');
+    return reply.code(500).send({ error: 'Failed to load attendees' });
+  }
+});
+
 
   
   // Create new event

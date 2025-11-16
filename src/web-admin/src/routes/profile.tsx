@@ -191,216 +191,198 @@ function ProfilePage() {
 
   return (
     <ProtectedTeamPortal>
-    <main className="min-h-screen bg-[#FFFFFF] flex flex-col lg:flex-row relative">
-      {toast && (
-        <div
-          className={`fixed top-6 right-6 z-50 rounded-xl px-4 py-3 text-white shadow-lg ${
-            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
-          }`}
-        >
-          {toast.message}
-        </div>
-      )}
-
-      <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
-        <div className="text-center lg:text-left">
-          <h2 className="text-3xl text-[#FFFFFF] flex items-center space-x-2 font-extrabold">
-            <span>Admin Dashboard</span>
-            <span className="w-6 h-6 bg-gradient-to-tr from-[#953363] to-[#AF668A] rounded-full flex-shrink-0" />
-          </h2>
-          <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full" />
-        </div>
-
-        <div className="flex flex-col space-y-4">
-          {sidebarLinks.map((link) => (
-            <button
-              key={link.title}
-              onClick={() => navigate({ to: link.path })}
-              className={`flex items-center p-4 rounded-xl transition-all shadow-md ${
-                link.path === '/profile' ? 'bg-[#AF668A] text-white' : 'bg-[#953363] text-white hover:bg-[#AF668A]'
+      <main className="min-h-screen bg-[#FFFFFF] flex flex-col lg:flex-row relative">
+        {toast && (
+          <div
+            className={`fixed top-6 right-6 z-50 rounded-xl px-4 py-3 text-white shadow-lg ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
               }`}
-            >
-              <link.icon className="w-6 h-6 mr-3" />
-              <span className="font-medium">{link.title}</span>
-            </button>
-          ))}
-        </div>
-      </aside>
+          >
+            {toast.message}
+          </div>
+        )}
 
-      <section className="flex-1 p-6 sm:p-10">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <header>
-            <p className="text-sm uppercase tracking-wide text-[#AF668A] mb-2">
-              Welcome Back
-            </p>
-            <h1 className="text-4xl font-extrabold text-[#7A003C]">
-              {displayName}
-            </h1>
-            <p className="text-[#953363] mt-2">
-              Review and update your personal information. Changes save instantly.
-            </p>
-          </header>
+        <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
+          <div className="text-center lg:text-left">
+            <h2 className="text-3xl text-[#FFFFFF] flex items-center space-x-2 font-extrabold">
+              <span>Admin Dashboard</span>
+              <span className="w-6 h-6 bg-gradient-to-tr from-[#953363] to-[#AF668A] rounded-full flex-shrink-0" />
+            </h2>
+            <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full" />
+          </div>
 
-          <section className="bg-white border border-[#F3D3DF] rounded-2xl shadow-md p-6 lg:p-8">
-            <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col space-y-4">
+            {sidebarLinks.map((link) => (
+              <button
+                key={link.title}
+                onClick={() => navigate({ to: link.path })}
+                className={`flex items-center p-4 rounded-xl transition-all shadow-md ${link.path === '/profile' ? 'bg-[#AF668A] text-white' : 'bg-[#953363] text-white hover:bg-[#AF668A]'
+                  }`}
+              >
+                <link.icon className="w-6 h-6 mr-3" />
+                <span className="font-medium">{link.title}</span>
+              </button>
+            ))}
+          </div>
+        </aside>
+
+        <section className="flex-1 p-6 sm:p-10">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
               <div>
-                <p className="text-sm text-[#AF668A]">Account</p>
-                <h2 className="text-2xl font-semibold text-[#7A003C]">
-                  {user.email}
-                </h2>
-                <p className="text-xs text-[#CA99B1] mt-1">
-                  Profile ID #{user.id} · Last updated {new Date(user.updatedAt).toLocaleString()}
+                <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">
+                  Hi, {formState.preferredName || `${formState.firstName}`}
+                </h1>
+                <p className="text-[#953363]">
+                  Update your contact details, preferences, and emergency information.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={handleEditToggle}
-                className="px-4 py-2 border border-[#CA99B1] text-[#7A003C] rounded-xl font-semibold hover:bg-[#FDF4F8]"
-              >
-                {isEditing ? 'Cancel' : 'Edit'}
-              </button>
+              <div className="flex flex-wrap gap-4 mt-4 lg:mt-0">
+                <button
+                  type="submit"
+                  disabled={!isEditing || mutation.status === 'pending'}
+                  className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
+                >
+                  {mutation.status === 'pending' ? 'Saving…' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleEditToggle}
+                  className="px-4 py-2 border border-[#CA99B1] text-[#7A003C] rounded-xl font-semibold hover:bg-[#FDF4F8]"
+                >
+                  {isEditing ? 'Cancel' : 'Edit'}
+                </button>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput
-                label="First Name"
-                value={formState.firstName}
-                onChange={(value) => handleInputChange('firstName', value)}
-                disabled={!isEditing}
-              />
-              <LabeledInput
-                label="Last Name"
-                value={formState.lastName}
-                onChange={(value) => handleInputChange('lastName', value)}
-                disabled={!isEditing}
-              />
-              <LabeledInput
-                label="Preferred Name"
-                value={formState.preferredName}
-                onChange={(value) => handleInputChange('preferredName', value)}
-                disabled={!isEditing}
-              />
-              <LabeledSelect
-                label="Pronouns"
-                value={formState.pronouns}
-                onChange={(value) => handleInputChange('pronouns', value)}
-                disabled={!isEditing}
-                options={[
-                  { label: 'Select pronouns', value: '' },
-                  { label: 'She / Her', value: 'She/Her' },
-                  { label: 'He / Him', value: 'He/Him' },
-                  { label: 'They / Them', value: 'They/Them' },
-                  { label: 'Prefer not to say', value: 'Prefer not to say' },
-                  { label: 'Other', value: 'Other' },
-                ]}
-              />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput
-                label="Email"
-                type="email"
-                value={formState.email}
-                onChange={(value) => handleInputChange('email', value)}
-                disabled
-              />
-              <LabeledInput
-                label="Phone Number"
-                value={formState.phoneNumber}
-                onChange={(value) => handleInputChange('phoneNumber', value)}
-                disabled={!isEditing}
-              />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput
-                label="Program"
-                value={formState.program}
-                onChange={(value) => handleInputChange('program', value)}
-                disabled={!isEditing}
-              />
-                <LabeledSelect
-                  label="Year"
-                  value={formState.year}
-                  onChange={(value) => handleInputChange('year', value)}
-                  disabled={!isEditing}
-                  options={[
-                    { label: 'Select year', value: '' },
-                    { label: '1', value: '1' },
-                    { label: '2', value: '2' },
-                    { label: '3', value: '3' },
-                    { label: '4', value: '4' },
-                    { label: '5+', value: '5+' },
-                    { label: 'Masters', value: 'Masters' },
-                    { label: 'PhD', value: 'PhD' },
-                  ]}
-                />
-            </div>
+            <section className="bg-white border border-[#F3D3DF] rounded-2xl shadow-md p-6 lg:p-8">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledInput
-                label="Student Number"
-                value={formState.studentNumber}
-                onChange={(value) => handleInputChange('studentNumber', value)}
-                disabled={!isEditing}
-              />
-              <LabeledDatePicker
-                label="Date of Birth"
-                value={formState.dob}
-                onChange={(value) => handleInputChange('dob', value)}
-                disabled={!isEditing}
-              />
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="First Name"
+                    value={formState.firstName}
+                    onChange={(value) => handleInputChange('firstName', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledInput
+                    label="Last Name"
+                    value={formState.lastName}
+                    onChange={(value) => handleInputChange('lastName', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledInput
+                    label="Preferred Name"
+                    value={formState.preferredName}
+                    onChange={(value) => handleInputChange('preferredName', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledSelect
+                    label="Pronouns"
+                    value={formState.pronouns}
+                    onChange={(value) => handleInputChange('pronouns', value)}
+                    disabled={!isEditing}
+                    options={[
+                      { label: 'Select pronouns', value: '' },
+                      { label: 'She / Her', value: 'She/Her' },
+                      { label: 'He / Him', value: 'He/Him' },
+                      { label: 'They / Them', value: 'They/Them' },
+                      { label: 'Prefer not to say', value: 'Prefer not to say' },
+                      { label: 'Other', value: 'Other' },
+                    ]}
+                  />
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LabeledTextArea
-                label="Emergency Contact"
-                value={formState.emergencyContact}
-                onChange={(value) => handleInputChange('emergencyContact', value)}
-                disabled={!isEditing}
-              />
-              <LabeledTextArea
-                label="Dietary Restrictions"
-                value={formState.dietaryRestrictions}
-                onChange={(value) => handleInputChange('dietaryRestrictions', value)}
-                disabled={!isEditing}
-              />
-            </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="Email"
+                    type="email"
+                    value={formState.email}
+                    onChange={(value) => handleInputChange('email', value)}
+                    disabled
+                  />
+                  <LabeledInput
+                    label="Phone Number"
+                    value={formState.phoneNumber}
+                    onChange={(value) => handleInputChange('phoneNumber', value)}
+                    disabled={!isEditing}
+                  />
+                </div>
 
-            <label className="flex items-center gap-3 text-[#7A003C] font-medium">
-              <input
-                type="checkbox"
-                className="h-5 w-5 rounded border-[#CA99B1] text-[#7A003C] focus:ring-[#7A003C]"
-                checked={formState.mediaConsent}
-                onChange={(event) => handleInputChange('mediaConsent', event.target.checked)}
-                disabled={!isEditing}
-              />
-              Media consent received
-            </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="Program"
+                    value={formState.program}
+                    onChange={(value) => handleInputChange('program', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledSelect
+                    label="Year"
+                    value={formState.year}
+                    onChange={(value) => handleInputChange('year', value)}
+                    disabled={!isEditing}
+                    options={[
+                      { label: 'Select year', value: '' },
+                      { label: '1', value: '1' },
+                      { label: '2', value: '2' },
+                      { label: '3', value: '3' },
+                      { label: '4', value: '4' },
+                      { label: '5+', value: '5+' },
+                      { label: 'Masters', value: 'Masters' },
+                      { label: 'PhD', value: 'PhD' },
+                    ]}
+                  />
+                </div>
 
-            <div className="flex flex-wrap gap-4 pt-2">
-              <button
-                type="button"
-                onClick={() => navigate({ to: '/' })}
-                className="px-6 py-3 border border-[#CA99B1] text-[#7A003C] rounded-xl font-semibold hover:bg-[#FDF4F8]"
-              >
-                ← Back to Dashboard
-              </button>
-              <button
-                type="submit"
-                disabled={!isEditing || mutation.status === 'pending'}
-                className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
-              >
-                {mutation.status === 'pending' ? 'Saving…' : 'Save Changes'}
-              </button>
-            </div>
-          </form>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledInput
+                    label="Student Number"
+                    value={formState.studentNumber}
+                    onChange={(value) => handleInputChange('studentNumber', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledDatePicker
+                    label="Date of Birth"
+                    value={formState.dob}
+                    onChange={(value) => handleInputChange('dob', value)}
+                    disabled={!isEditing}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <LabeledTextArea
+                    label="Emergency Contact"
+                    value={formState.emergencyContact}
+                    onChange={(value) => handleInputChange('emergencyContact', value)}
+                    disabled={!isEditing}
+                  />
+                  <LabeledTextArea
+                    label="Dietary Restrictions"
+                    value={formState.dietaryRestrictions}
+                    onChange={(value) => handleInputChange('dietaryRestrictions', value)}
+                    disabled={!isEditing}
+                  />
+                </div>
+
+                <label className="flex items-center gap-3 text-[#7A003C] font-medium">
+                  <input
+                    type="checkbox"
+                    className="h-5 w-5 rounded border-[#CA99B1] text-[#7A003C] focus:ring-[#7A003C]"
+                    checked={formState.mediaConsent}
+                    onChange={(event) => handleInputChange('mediaConsent', event.target.checked)}
+                    disabled={!isEditing}
+                  />
+                  Media consent received
+                </label>
+
+
+              </form>
+            </section>
+          </div>
         </section>
-      </div>
-    </section>
-    </main>
-  </ProtectedTeamPortal>
+      </main>
+    </ProtectedTeamPortal>
   );
 }
 
@@ -504,11 +486,10 @@ function LabeledSelect({
                       onChange(option.value);
                       setIsOpen(false);
                     }}
-                    className={`w-full px-4 py-2 text-left text-sm ${
-                      isSelected
+                    className={`w-full px-4 py-2 text-left text-sm ${isSelected
                         ? 'bg-[#F9E9F0] text-[#7A003C] font-semibold'
                         : 'text-[#7A003C] hover:bg-[#FDF4F8]'
-                    }`}
+                      }`}
                   >
                     {option.label}
                   </button>
@@ -551,3 +532,4 @@ function LabeledDatePicker({
     </label>
   );
 }
+
