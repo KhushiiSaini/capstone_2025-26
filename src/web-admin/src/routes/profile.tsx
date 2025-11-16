@@ -132,6 +132,8 @@ function ProfilePage() {
     mutationFn: updateUser,
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['admin-profile', currentEmail], updatedUser);
+        syncFormWithUser(updatedUser); // <— sync form state
+
       setToast({ type: 'success', message: 'Changes saved successfully.' });
       setIsEditing(false);
       setTimeout(() => setToast(null), 3000);
@@ -239,6 +241,7 @@ function ProfilePage() {
               <div className="flex flex-wrap gap-4 mt-4 lg:mt-0">
                 <button
                   type="submit"
+                  onClick={() => mutation.mutate({ id: user.id, data: formState })}
                   disabled={!isEditing || mutation.status === 'pending'}
                   className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
                 >

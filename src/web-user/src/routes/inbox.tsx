@@ -146,15 +146,17 @@ function InboxPage() {
 
 
       {/* 📬 PAGE CONTENT */}
-      <div className="max-w-6xl mx-auto w-full p-8 xl:p-12">
+                    <div className=" bg-[#F9E9F0] p-8">
+
+      <div className="rounded-3xl shadow-md p-10 bg-white mx-auto w-full ">
 
         {/* HEADER */}
-        <div className="bg-[#F9E9F0] rounded-2xl p-6 mb-10 flex justify-between items-center border border-[#CA99B1]">
+        <div className="bg-[#F9E9F0] rounded-2xl p-6 mb-10 flex justify-between items-center ">
           <div>
             <h1 className="text-4xl font-extrabold text-[#7A003C]">
               Notification Inbox
             </h1>
-            <p className="text-[#953363]">
+            <p className="mt-2 text-[#953363]">
               View important alerts about events and requirements.
             </p>
           </div>
@@ -273,11 +275,12 @@ function InboxPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* FOOTER */}
-      <footer className="bg-[#F3D3DF] text-[#7A003C] text-center py-6 text-sm">
+      {/* <footer className="bg-[#F3D3DF] text-[#7A003C] text-center py-6 text-sm">
         © 2025 MES Events Platform. Large event support and coordination.
-      </footer>
+      </footer> */}
     </main>
   );
 }

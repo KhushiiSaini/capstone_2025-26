@@ -146,7 +146,11 @@ function ProfilePage() {
       </header>
 
       {/* ---------------- Main Profile Content ---------------- */}
-      <main className="p-6 sm:p-10 max-w-4xl mx-auto relative">
+      <main className="bg-[#F9E9F0] p-8">
+                        {/* <div className=" bg-[#F9E9F0] p-8"> */}
+
+      <div className="rounded-3xl shadow-md p-10 bg-white mx-auto w-full ">
+
         {toast && (
           <div
             className={`fixed top-6 right-6 z-50 rounded-xl px-4 py-3 text-white shadow-lg ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
@@ -260,6 +264,7 @@ function ProfilePage() {
 
             </form>
           </section>
+        </div>
         </div>
       </main>
     </div>
