@@ -29,6 +29,17 @@ function NotifyPage() {
   // const eventId = Number(params.eventId || 1); // fallback to 1
   const match = useMatch(Route);
   const eventId = match?.params.eventId;
+  const [eventName, setEventName] = useState('');
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      const res = await fetch(`/api/events/${eventId}`);
+      const data = await res.json();
+      setEventName(data.name);
+    };
+    fetchEvent();
+  }, [eventId]);
+
 
   // Fetch attendees from backend on mount
   useEffect(() => {
@@ -134,18 +145,25 @@ function NotifyPage() {
         </div>
       </aside>
 
+
       {/* Main Content */}
       <section className="flex-1 w-full p-8 lg:p-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">Send Notification</h1>
-          <p className="text-[#953363]">Send a notification to event attendees</p>
-        </div>
+        
+         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
+          <div>
+            <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">
+              Notify Attendees: {eventName}</h1>
+                     {/* <p className="text-[#953363]">Send a notification to event attendees</p> */}
 
+          </div>
+
+        </div>
+        
+         {/* <div className="mt-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow"> */}
         {/* Status Message */}
         {status && (
           <div
-            className={`mb-6 p-4 rounded-lg flex justify-between items-center ${
+            className={`mt-6 mb-6 p-4 rounded-lg flex justify-between items-center ${
               status.type === 'success'
                 ? 'bg-green-50 border border-green-200 text-green-800'
                 : 'bg-red-50 border border-red-200 text-red-800'
@@ -157,9 +175,10 @@ function NotifyPage() {
             </button>
           </div>
         )}
+        {/* </div> */}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-[#F9E9F0] border border-[#CA99B1] rounded-2xl p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-[#F9E9F0] border border-[#CA99B1] rounded-2xl p-8 mt-6 space-y-6">
           {/* Message Input */}
           <div>
             <label className="block text-sm font-semibold text-[#7A003C] mb-2">Message</label>
