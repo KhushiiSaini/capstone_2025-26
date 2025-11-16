@@ -53,7 +53,7 @@ function EventDetailPage() {
   const waiversSigned = attendees.filter((a) => a.waiver).length;
 
   return (
-    <main className="min-h-screen flex bg-gray-50">
+    <main className="min-h-screen flex">
       {/* Sidebar */}
       <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
         <div className="text-center lg:text-left">

@@ -36,11 +36,13 @@ function MyEventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-[#F9E9F0]">
       {/* ---------------- Taskbar / Header ---------------- */}
       <header className="bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+        <div className="w-full px-6 py-4 flex justify-between items-center">
+
+          {/* LEFT-ALIGNED LOGO */}
+          <div className="flex items-center space-x-3" onClick={() => window.location.href = "/"}>
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
               MES
             </div>
@@ -49,27 +51,24 @@ function MyEventsPage() {
             </div>
           </div>
 
+          {/* RIGHT-SIDE NAV BUTTONS */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => navigate({ to: "/events" })}
+              onClick={() => navigate({ to: '/events' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Events
             </button>
-            {/* <button
-              onClick={() => navigate({ to: "/my-events" })}
-              className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
-            >
-              My Events
-            </button> */}
+
             <button
-              onClick={() => navigate({ to: "/profile" })}
+              onClick={() => navigate({ to: '/profile' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Profile
             </button>
+
             <button
-              onClick={() => navigate({ to: "/inbox" })}
+              onClick={() => navigate({ to: '/inbox' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Notifications
@@ -83,16 +82,34 @@ function MyEventsPage() {
               Logout
             </button>
           </div>
+
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto p-8">
+      <main className="mx-auto p-8 bg-[#F9E9F0]">
         <div className="bg-white rounded-3xl shadow-md p-10 border border-purple-100">
-          <h2 className="text-4xl font-bold text-maroon-800 mb-10">My Events</h2>
+          {/* <h2 className="text-4xl font-bold text-maroon-800 mb-10">My Events</h2> */}
+          <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
+            <div>
+              <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">
+                My Events
+              </h1>
 
+            </div>
+            <div className="flex flex-wrap gap-4 mt-4 lg:mt-0">
+              <button
+                onClick={() => navigate({ to: "/events" })}
+                className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
+              >
+                Back to Events
+              </button>
+
+
+            </div>
+          </div>
           {events.length === 0 ? (
-            <p className="text-gray-600">No events registered yet.</p>
+            <p className="ml-4 text-gray-600">No events registered yet.</p>
           ) : (
             <div className="grid gap-10 md:grid-cols-3">
               {events.map((event) => (

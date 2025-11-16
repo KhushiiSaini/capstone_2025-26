@@ -96,9 +96,10 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <h2 style={{ margin: 0, color: '#7A003C', fontSize: '1.8rem' }}>Choose your access</h2>
+                  <h2 style={{ margin: 0, color: '#7A003C', fontSize: '1.8rem' }}>Secure User access</h2>
                   <p style={{ color: '#953363', marginTop: '8px' }}>
-                    Select the method that matches how you’re accessing Team D services today.
+                    Choose how you’d like to authenticate for the user experience.
+
                   </p>
                 </div>
 
@@ -110,9 +111,10 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                     backgroundColor: '#FDF4F8',
                   }}
                 >
-                  <h3 style={{ color: '#7A003C', marginTop: 0 }}>🚀 Local Development</h3>
+                  {/* <h3 style={{ color: '#7A003C', marginTop: 0 }}>🚀 Local Development</h3> */}
                   <p style={{ color: '#953363', marginBottom: '16px' }}>
-                    Ideal for local QA and demos. No main portal credentials required.
+                    Ideal when running the portal locally.
+
                   </p>
                   <button
                     onClick={() => setShowLocalLogin(true)}
@@ -129,7 +131,7 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                     Use Local Login
                   </button>
                 </div>
-{/* 
+                {/* 
                 <div
                   style={{
                     border: '1px solid #E1E7EE',

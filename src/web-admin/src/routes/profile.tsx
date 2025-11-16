@@ -132,6 +132,8 @@ function ProfilePage() {
     mutationFn: updateUser,
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['admin-profile', currentEmail], updatedUser);
+        syncFormWithUser(updatedUser); // <— sync form state
+
       setToast({ type: 'success', message: 'Changes saved successfully.' });
       setIsEditing(false);
       setTimeout(() => setToast(null), 3000);
@@ -210,7 +212,7 @@ function ProfilePage() {
             <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full" />
           </div>
 
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col sticky space-y-4">
             {sidebarLinks.map((link) => (
               <button
                 key={link.title}
@@ -226,7 +228,7 @@ function ProfilePage() {
         </aside>
 
         <section className="flex-1 p-6 sm:p-10">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="mx-auto space-y-8">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
               <div>
                 <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">
@@ -239,6 +241,7 @@ function ProfilePage() {
               <div className="flex flex-wrap gap-4 mt-4 lg:mt-0">
                 <button
                   type="submit"
+                  onClick={() => mutation.mutate({ id: user.id, data: formState })}
                   disabled={!isEditing || mutation.status === 'pending'}
                   className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
                 >

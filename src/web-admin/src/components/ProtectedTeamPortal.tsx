@@ -95,9 +95,9 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <h2 style={{ margin: 0, color: '#7A003C', fontSize: '1.8rem' }}>Secure Access</h2>
+                  <h2 style={{ margin: 0, color: '#7A003C', fontSize: '1.8rem' }}>Secure Admin Access</h2>
                   <p style={{ color: '#953363', marginTop: '8px' }}>
-                    Choose how you’d like to authenticate for the Team D admin experience.
+                    Choose how you’d like to authenticate for the admin experience.
                   </p>
                 </div>
 
@@ -109,9 +109,9 @@ function UnauthorizedAccess({ onLocalLogin }: { onLocalLogin: (user: AuthUser, t
                     backgroundColor: '#FDF4F8',
                   }}
                 >
-                  <h3 style={{ color: '#7A003C', marginTop: 0 }}>🚀 Local Development</h3>
+                  {/* <h3 style={{ color: '#7A003C', marginTop: 0 }}>🚀 Local Development</h3> */}
                   <p style={{ color: '#953363', marginBottom: '16px' }}>
-                    Ideal when running the portal locally. No main authentication required.
+                    Ideal when running the portal locally. 
                   </p>
                   <button
                     onClick={() => setShowLocalLogin(true)}
@@ -240,12 +240,12 @@ export default function ProtectedTeamPortal({ children }: ProtectedTeamPortalPro
     return <UnauthorizedAccess onLocalLogin={handleLocalLogin} />;
   }
 return (
-  <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+  <div className="min-h-screen bg-white">
     {/* ---------------- Header ---------------- */}
     <header className="fixed top-0 left-0 w-full bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Left: Logo + Title */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3" onClick={() => window.location.href = "/"}>
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
             MES
           </div>
@@ -268,7 +268,7 @@ return (
     </header>
 
     {/* Main content */}
-    <main className="max-w-7xl mx-auto py-6">
+    <main className="mx-auto py-6">
       {children}
     </main>
   </div>

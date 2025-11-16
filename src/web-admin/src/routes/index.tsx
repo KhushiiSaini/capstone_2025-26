@@ -40,7 +40,7 @@ function TeamDDashboard() {
   return (
     <main className="min-h-screen bg-[#FFFFFF] flex flex-col lg:flex-row transition-colors duration-300">
       {/* Sidebar */}
-      
+
       <aside className="bg-[#620030] text-white w-full lg:w-72 shadow-lg p-8 flex flex-col space-y-8">
         <div className="text-center lg:text-left">
           {/* Main header */}
@@ -73,15 +73,15 @@ function TeamDDashboard() {
             Hi {user?.email}
           </h1> */}
           <h1 className="text-4xl lg:text-5xl font-extrabold text-[#7A003C] mb-2">
-  Welcome, {user?.email
-    ?.split("@")[0]             // get the part before @
-    .split(".")                 // split by dot
-    .map(name => name.charAt(0).toUpperCase() + name.slice(1)) // capitalize each part
-    .join(" ")}                 
-</h1>
+            Welcome, {user?.email
+              ?.split("@")[0]             // get the part before @
+              .split(".")                 // split by dot
+              .map(name => name.charAt(0).toUpperCase() + name.slice(1)) // capitalize each part
+              .join(" ")}
+          </h1>
 
           <p className="text-[#953363] text-lg">
-  Access your admin dashboard to manage event registrations, handle check-ins, and send notifications.
+            Access your admin dashboard to manage event registrations, handle check-ins, and send notifications.
           </p>
         </div>
 

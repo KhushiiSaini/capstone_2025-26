@@ -58,11 +58,13 @@ function EventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+    <div className="min-h-screen bg-[#F9E9F0]">
       {/* ---------------- Taskbar / Header ---------------- */}
       <header className="bg-gradient-to-r from-[#620030] to-[#953363] text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+        <div className="w-full px-6 py-4 flex justify-between items-center">
+
+          {/* LEFT-ALIGNED LOGO */}
+          <div className="flex items-center space-x-3" onClick={() => window.location.href = "/"}>
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#7A003C] font-extrabold text-lg shadow-sm">
               MES
             </div>
@@ -71,21 +73,24 @@ function EventsPage() {
             </div>
           </div>
 
+          {/* RIGHT-SIDE NAV BUTTONS */}
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => navigate({ to: "/events" })}
+              onClick={() => navigate({ to: '/events' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Events
             </button>
+
             <button
-              onClick={() => navigate({ to: "/profile" })}
+              onClick={() => navigate({ to: '/profile' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Profile
             </button>
+
             <button
-              onClick={() => navigate({ to: "/inbox" })}
+              onClick={() => navigate({ to: '/inbox' })}
               className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-lg text-sm font-semibold transition"
             >
               Notifications
@@ -99,16 +104,34 @@ function EventsPage() {
               Logout
             </button>
           </div>
+
         </div>
       </header>
 
-      {/* ---------------- Main Content ---------------- */}
-      {/* <main className="max-w-7xl mx-auto p-8">
+
+      <main className=" mx-auto p-8 bg-[#F9E9F0]">
         <div className="bg-white rounded-3xl shadow-md p-10 border border-purple-100">
-          <h2 className="text-4xl font-bold text-maroon-800 mb-10">
-            Upcoming Events
-          </h2>
-          
+          {/* Header row with title and button */}
+
+          <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
+            <div>
+              <h1 className="text-4xl font-extrabold text-[#7A003C] py-2 mb-2">
+                Upcoming Events
+              </h1>
+
+            </div>
+            <div className="flex flex-wrap gap-4 mt-4 lg:mt-0">
+              <button
+                onClick={() => navigate({ to: "/my-events" })}
+                className="px-6 py-3 bg-[#7A003C] text-white rounded-xl font-semibold shadow hover:bg-[#953363] transition disabled:opacity-50"
+              >
+                My Events
+              </button>
+
+
+            </div>
+          </div>
+
           {events.length === 0 && <p className="text-gray-600">No events available.</p>}
 
           <div className="grid gap-10 md:grid-cols-3">
@@ -117,6 +140,7 @@ function EventsPage() {
                 key={event.id}
                 className="bg-pink-50 border border-pink-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition cursor-pointer"
               >
+                {/* Event card content */}
                 <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -155,71 +179,7 @@ function EventsPage() {
             ))}
           </div>
         </div>
-      </main> */}
-      <main className="max-w-7xl mx-auto p-8">
-  <div className="bg-white rounded-3xl shadow-md p-10 border border-purple-100">
-    {/* Header row with title and button */}
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-4xl font-bold text-maroon-800">
-        Upcoming Events
-      </h2>
-
-      <button
-        onClick={() => navigate({ to: "/my-events" })}
-        className="bg-maroon-700 hover:bg-maroon-800 text-white font-medium py-2.5 px-6 rounded-xl transition"
-      >
-        My Events
-      </button>
-    </div>
-
-    {events.length === 0 && <p className="text-gray-600">No events available.</p>}
-
-    <div className="grid gap-10 md:grid-cols-3">
-      {events.map((event) => (
-        <div
-          key={event.id}
-          className="bg-pink-50 border border-pink-200 rounded-3xl p-8 shadow-sm hover:shadow-md transition cursor-pointer"
-        >
-          {/* Event card content */}
-          <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-10 h-10 text-pink-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10m-12 8h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-
-          <h3 className="text-2xl font-semibold text-maroon-800 mb-3">
-            {event.name}
-          </h3>
-          <p className="text-pink-800 text-sm mb-1">
-            {new Date(event.date).toDateString()}
-          </p>
-          <p className="text-pink-800 text-sm mb-4">{event.location}</p>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleRegister(event.id);
-            }}
-            className="w-full bg-maroon-700 hover:bg-maroon-800 text-white font-medium py-2.5 rounded-xl transition"
-          >
-            Register
-          </button>
-        </div>
-      ))}
-    </div>
-  </div>
-</main>
+      </main>
 
 
       {/* QR Modal */}
