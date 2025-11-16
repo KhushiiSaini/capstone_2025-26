@@ -212,7 +212,7 @@ function ProfilePage() {
             <div className="mt-2 w-16 h-1 bg-[#AF668A] rounded-full" />
           </div>
 
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col sticky space-y-4">
             {sidebarLinks.map((link) => (
               <button
                 key={link.title}
@@ -228,7 +228,7 @@ function ProfilePage() {
         </aside>
 
         <section className="flex-1 p-6 sm:p-10">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="mx-auto space-y-8">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-[#F9E9F0] rounded-2xl p-6 shadow">
               <div>
                 <h1 className="text-4xl font-extrabold text-[#7A003C] mb-2">

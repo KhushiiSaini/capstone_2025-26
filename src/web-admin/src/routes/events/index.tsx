@@ -298,7 +298,7 @@ useEffect(() => {
                     <td className="px-4 py-2 text-[#AF668A]">{event.location}</td>
                     {/* <td className="px-4 py-2 text-[#7A003C]">{total}</td> */}
                     {/* <td className="px-4 py-2 text-[#7A003C]">{waivers}/{total}</td> */}
-                    <td className="px-4 py-2 space-x-2 flex flex-wrap">
+                    <td className="px-4 py-2 space-x-2 flex ">
                       <button
                         onClick={() => navigate({ to: `/events/${event.id}` })}
                         className="flex items-center px-2 py-1 border border-[#953363] text-[#953363] rounded-lg hover:bg-[#953363]/10 transition text-sm"
